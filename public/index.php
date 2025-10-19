@@ -21,6 +21,10 @@ switch ($page) {
         include APP_PATH . '/controleurs/contact.php'; // si l'url contient contact renvoie vers le controlleur contact.php
         break;
 
+    case 'mentions_legales':
+        include APP_PATH . '/controleurs/mentions_legales.php';
+        break;
+
     default:
         echo "Erreur 404 - Page non trouvée";
         break;
