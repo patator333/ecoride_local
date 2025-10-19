@@ -25,6 +25,11 @@ switch ($page) {
         include APP_PATH . '/controleurs/mentions_legales.php';
         break;
 
+    case 'connexion':
+    include APP_PATH . '/controleurs/connexion.php';
+    break;
+
+
     default:
         echo "Erreur 404 - Page non trouvée";
         break;

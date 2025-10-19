@@ -15,8 +15,8 @@
       <ul class="navbar-nav me-auto"> 
         <li class="nav-item"><a class="nav-link" href="index.php">Page d'accueil</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Covoiturages</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Connexion</a></li>
-        <li><a class="nav-link" href="<?= PUBLIC_URL ?>/?page=contact">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= PUBLIC_URL ?>/index.php?page=connexion">Connexion</a></li>
+        <li><a class="nav-link" href="<?= PUBLIC_URL ?>/index.php?page=contact">Contact</a></li>
       </ul>
     </div>
   </div>
