@@ -20,3 +20,4 @@ try {
 } catch (PDOException $e) {
     die("Erreur de connexion à la BDD : " . $e->getMessage());
 }
+ 

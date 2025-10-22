@@ -1,6 +1,8 @@
+
 <div class="container text-center mt-5">
   <h1 class="display-1">Ecoride</h1>
-  <h2 class="display-4 mb-4">Rechercher un covoiturage</h2>
+
+  <h2 class="display-4 mb-4"><a href="index.php?page=recherche_covoiturage" class="btn btn-success btn-lg">Rechercher un covoiturage</a></h2>
 
   <div class="row mb-4">
     <div class="col-md-4">
@@ -28,3 +30,5 @@
     Réduire les émissions de CO2
   </p>
 </div>
+ 
+

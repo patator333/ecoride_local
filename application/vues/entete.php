@@ -13,11 +13,23 @@
     <a class="navbar-brand" href="index.php">Ecoride</a>
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto"> 
-        <li class="nav-item"><a class="nav-link" href="index.php">Page d'accueil</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Covoiturages</a></li>
-        <li class="nav-item"><a class="nav-link" href="<?= PUBLIC_URL ?>/index.php?page=connexion">Connexion</a></li>
-        <li><a class="nav-link" href="<?= PUBLIC_URL ?>/index.php?page=contact">Contact</a></li>
+         <li class="nav-item">
+          <a class="nav-link" href="index.php">Page d'accueil</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="index.php?page=recherche_covoiturage">Covoiturage</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="index.php?page=connexion">Connexion</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="index.php?page=contact">Contact</a>
+        </li>
       </ul>
     </div>
   </div>
 </nav>
+  

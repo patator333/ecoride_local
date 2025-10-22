@@ -20,3 +20,4 @@ function verifierConnexion($email, $password) {
 
     return false;
 }
+ 

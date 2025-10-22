@@ -1,6 +1,4 @@
-<?php
-include APP_PATH . '/vues/entete.php';
-?>
+<?php include APP_PATH . '/vues/entete.php';?>
 
 <div class="container mt-5">
     <h2 class="text-center mb-4">Connexion</h2>
@@ -28,6 +26,5 @@ include APP_PATH . '/vues/entete.php';
     </form>
 </div>
 
-<?php
-include APP_PATH . '/vues/pied_de_page.php';
-?>
+<?php include APP_PATH . '/vues/pied_de_page.php';?>
+ 

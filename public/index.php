@@ -29,8 +29,11 @@ switch ($page) {
     include APP_PATH . '/controleurs/connexion.php';
     break;
 
+    case 'recherche_covoiturage':   
+        include APP_PATH . '/controleurs/recherche_covoiturage.php';
+        break;
 
     default:
         echo "Erreur 404 - Page non trouvée";
         break;
-}
+} 

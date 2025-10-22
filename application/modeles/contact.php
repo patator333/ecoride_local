@@ -19,3 +19,4 @@ function enregistrerContact($nom, $email, $commentaire) {
         return false;
     }
 }
+ 

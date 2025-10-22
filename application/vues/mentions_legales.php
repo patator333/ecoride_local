@@ -1,6 +1,4 @@
-<?php
-include APP_PATH . '/vues/entete.php';
-?>
+<?php include APP_PATH . '/vues/entete.php';?>
 
 <div class="container mt-5">
     <h2 class="text-center mb-4">Mentions légales - Ecoride</h2>
@@ -33,6 +31,4 @@ include APP_PATH . '/vues/entete.php';
     </p>
 </div>
 
-<?php
-include APP_PATH . '/vues/pied_de_page.php';
-?>
+<?php include APP_PATH . '/vues/pied_de_page.php';?>
