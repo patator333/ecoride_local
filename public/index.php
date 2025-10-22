@@ -26,12 +26,17 @@ switch ($page) {
         break;
 
     case 'connexion':
-    include APP_PATH . '/controleurs/connexion.php';
-    break;
+        include APP_PATH . '/controleurs/connexion.php';
+        break;
 
     case 'recherche_covoiturage':   
         include APP_PATH . '/controleurs/recherche_covoiturage.php';
         break;
+
+    case 'creer_compte':
+        include APP_PATH . '/controleurs/creer_compte.php';
+        break;
+
 
     default:
         echo "Erreur 404 - Page non trouvée";
