@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         // ici stocke sur le serveur les identifiants de connexion
                                         // le serveur renvoi par la suite un cookie au navigateur
 
-            header('Location: index.php?page=accueil'); // redirige l'utilisateur connecté à cette page
+            header("Location: index.php?page=espace_utilisateur"); // redirige l'utilisateur connecté à cette page
 
             exit;
         } else {

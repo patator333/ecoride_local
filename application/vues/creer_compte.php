@@ -24,7 +24,7 @@
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-success">Valider la création du compte</button>
+            <button type="submit" class="btn btn-success">Valider la création du compte et l'attribution de 20 crédits</button>
         </div>
     </form>
 </div>

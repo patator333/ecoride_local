@@ -1,0 +1,162 @@
+<?php include APP_PATH . '/vues/entete.php'; ?>
+<div class="container mt-4">
+
+    <!-- ====== ROLE UTILISATEUR ====== -->
+    <h3 class="text-center">Votre rôle</h3>
+    <?php if($message) echo "<div class='alert alert-info text-center'>$message</div>"; ?>
+    <form method="POST" class="text-center mb-4">
+        <input type="radio" name="role" value="1" <?= $user['id_role']==1?'checked':'' ?>> Passager
+        <input type="radio" name="role" value="2" <?= $user['id_role']==2?'checked':'' ?>> Chauffeur
+        <input type="radio" name="role" value="3" <?= $user['id_role']==3?'checked':'' ?>> Chauffeur & Passager
+        <button type="submit" class="btn btn-success btn-sm ms-2">Valider</button>
+    </form>
+
+    <!-- ====== VEHICULES ====== -->
+    <?php if($user['id_role'] != 'passager'): ?>
+        <h3 class="text-center">Mes véhicules</h3>
+        <?php if($vehicule_message) echo "<div class='alert alert-info text-center'>$vehicule_message</div>"; ?>
+        <?php if(count($vehicules)==0): ?>
+            <p class="text-center">Aucun véhicule enregistré.</p>
+        <?php else: ?>
+            <table class="table table-striped text-center">
+                <thead>
+                    <tr>
+                        <th>Immatriculation</th><th>Date 1ère immat.</th><th>Marque</th><th>Modèle</th><th>Places</th><th>Motorisation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($vehicules as $v): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($v['immatriculation'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($v['date_de_premiere_immatriculation'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($v['marque'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($v['modele'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($v['places_disponibles'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($v['motorisation'] ?? $v['id_type_motorisation']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
+        <!-- Formulaire ajout véhicule -->
+        <h4 class="text-center mt-4">Ajouter un véhicule</h4>
+        <form method="POST" class="mb-4">
+            <div class="row mb-2">
+                <div class="col"><input type="text" name="immatriculation" class="form-control" placeholder="Immatriculation" required></div>
+                <div class="col"><input type="date" name="date_premiere_immatriculation" class="form-control" placeholder="Date 1ère immatriculation" required></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col"><input type="text" name="marque" class="form-control" placeholder="Marque" required></div>
+                <div class="col"><input type="text" name="modele" class="form-control" placeholder="Modèle" required></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col"><input type="text" name="couleur" class="form-control" placeholder="Couleur"></div>
+                <div class="col"><input type="number" name="places" class="form-control" placeholder="Places" required></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <select name="motorisation" class="form-control" required>
+                        <option value="1">Essence</option>
+                        <option value="2">Diesel</option>
+                        <option value="3">Hybride</option>
+                        <option value="4">Electrique</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <button type="submit" name="ajouter_vehicule" class="btn btn-primary">Ajouter ce véhicule</button>
+                </div>
+            </div>
+        </form>
+    <?php endif; ?>
+
+    <!-- ====== PREFERENCES ====== -->
+    <h3 class="text-center mt-4">Préférences</h3>
+    <?php if($pref_message) echo "<div class='alert alert-info text-center'>$pref_message</div>"; ?>
+    <form method="POST" class="mb-4 text-center">
+        <input type="checkbox" name="fumeur" <?= (!empty($preferences['fumeur']))?'checked':'' ?>> Fumeur
+        <input type="checkbox" name="animal" <?= (!empty($preferences['animal']))?'checked':'' ?>> Animal
+        <input type="text" name="remarques_particulieres" class="form-control my-2" placeholder="Remarques particulières" value="<?= htmlspecialchars($preferences['remarques_particulieres'] ?? '') ?>">
+        <button type="submit" name="valider_preferences" class="btn btn-success btn-sm">Valider</button>
+    </form>
+
+    <!-- ====== CREER VOYAGE ====== -->
+    <h3 class="text-center mt-4">Créer un voyage</h3>
+    <?php if($voyage_message) echo "<div class='alert alert-info text-center'>$voyage_message</div>"; ?>
+    <form method="POST" class="mb-4">
+        <div class="row mb-2">
+            <div class="col"><input type="text" name="ville_depart" class="form-control" placeholder="Ville de départ" required></div>
+            <div class="col"><input type="text" name="ville_arrivee" class="form-control" placeholder="Ville d'arrivée" required></div>
+        </div>
+        <div class="row mb-2">
+            <div class="col"><input type="date" name="date_depart" class="form-control" required></div>
+            <div class="col"><input type="time" name="heure_depart" class="form-control" required></div>
+        </div>
+        <div class="row mb-2">
+            <div class="col"><input type="date" name="date_arrivee" class="form-control" required></div>
+            <div class="col"><input type="time" name="heure_arrivee" class="form-control" required></div>
+        </div>
+        <div class="row mb-2">
+            <div class="col"><input type="number" name="prix" class="form-control" placeholder="Prix (2 crédits pour la plateforme inclus)" required></div>
+            <div class="col">
+                <select name="id_vehicule" class="form-control" required>
+                    <?php foreach($vehicules as $v): ?>
+                        <option value="<?= $v['id_vehicule'] ?>"><?= htmlspecialchars($v['marque'].' '.$v['modele'].' ('.$v['immatriculation'].')') ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+        <button type="submit" name="creer_voyage" class="btn btn-primary">Valider le voyage</button>
+    </form>
+
+    <!-- ====== HISTORIQUE ====== -->
+    <h3 class="text-center mt-4">Historique des covoiturages</h3>
+    <?php if(count($historique)==0): ?>
+        <p class="text-center">Aucun covoiturage réalisé.</p>
+    <?php else: ?>
+        <table class="table table-striped">
+            <thead>
+                <tr><th>Départ</th><th>Arrivée</th><th>Date</th><th>Heure départ</th><th>Heure arrivée</th><th>Prix</th><th>Chauffeur</th></tr>
+            </thead>
+            <tbody>
+                <?php foreach($historique as $h): ?>
+                <tr>
+                    <td><?= htmlspecialchars($h['lieu_depart']) ?></td>
+                    <td><?= htmlspecialchars($h['lieu_arrivee']) ?></td>
+                    <td><?= $h['date_depart'] ?></td>
+                    <td><?= $h['heure_depart'] ?></td>
+                    <td><?= $h['heure_arrivee'] ?></td>
+                    <td><?= $h['prix_par_personne'] ?></td>
+                    <td><?= htmlspecialchars($h['nom_chauffeur']) ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <!-- ====== COVOITURAGES PROGRAMMES ====== -->
+    <h3 class="text-center mt-4">Covoiturages programmés</h3>
+    <?php if(count($covoiturages_programmes)==0): ?>
+        <p class="text-center">Aucun covoiturage programmé.</p>
+    <?php else: ?>
+        <table class="table table-striped">
+            <thead>
+                <tr><th>#</th><th>Départ</th><th>Arrivée</th><th>Date départ</th><th>Heure départ</th><th>Chauffeur</th><th>Véhicule</th></tr>
+            </thead>
+            <tbody>
+                <?php foreach($covoiturages_programmes as $c): ?>
+                <tr>
+                    <td><?= $c['id_covoiturage'] ?></td>
+                    <td><?= htmlspecialchars($c['lieu_depart']) ?></td>
+                    <td><?= htmlspecialchars($c['lieu_arrivee']) ?></td>
+                    <td><?= $c['date_depart'] ?></td>
+                    <td><?= $c['heure_depart'] ?></td>
+                    <td><?= htmlspecialchars($c['nom_chauffeur']) ?></td>
+                    <td><?= htmlspecialchars($c['marque'].' '.$c['modele']) ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+</div>

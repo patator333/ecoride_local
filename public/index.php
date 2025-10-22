@@ -37,6 +37,9 @@ switch ($page) {
         include APP_PATH . '/controleurs/creer_compte.php';
         break;
 
+    case 'espace_utilisateur':
+        include APP_PATH . '/controleurs/espace_utilisateur.php';
+        break;
 
     default:
         echo "Erreur 404 - Page non trouvée";
