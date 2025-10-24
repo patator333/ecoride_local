@@ -45,6 +45,10 @@ switch ($page) {
         include APP_PATH . '/controleurs/deconnexion.php';
         break;
 
+    case 'espace_employe':
+        include APP_PATH . '/controleurs/espace_employe.php';
+        break;
+
     default:
         echo "Erreur 404 - Page non trouvée";
         break;

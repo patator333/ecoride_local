@@ -1,27 +1,44 @@
 <?php
-require_once APP_PATH . '/modeles/connexion.php'; // inclu la fonction verifierConnexion()
+require_once APP_PATH . '/modeles/utilisateur.php';
+require_once ROOT_PATH . '/config/config.php';
 
-session_start(); // pour gérer la session utilisateur
+// Démarrer la session si elle n'est pas déjà démarrée
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $message = '';
 $email = '';
 
+// Vérifier si le formulaire est soumis
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
     if ($email && $password) {
-        $utilisateur = verifierConnexion($email, $password);  // $utilisateur contient le résultat de la fonction
+        // Vérifier les identifiants
+        $utilisateur = verifierConnexion($email, $password);
 
-        if ($utilisateur) {              // Si la fonction retourne un résultat cela signifie que les identifiants sont corrects
-           
-            $_SESSION['user'] = $utilisateur;  // Super variable globale qui perdure entre les pages tant que la session de l'utilisateur est active
+        if ($utilisateur) {
+            // Stocker les infos de l'utilisateur en session
+            $_SESSION['user'] = $utilisateur;
 
-                                        // ici stocke sur le serveur les identifiants de connexion
-                                        // le serveur renvoi par la suite un cookie au navigateur
-
-            header("Location: index.php?page=espace_utilisateur"); // redirige l'utilisateur connecté à cette page
-
+            // Redirection selon le type de compte
+            switch ($utilisateur['id_type_compte']) {
+                case 1: // Utilisateur classique
+                    header("Location: index.php?page=espace_utilisateur");
+                    break;
+                case 2: // Employé
+                    header("Location: index.php?page=espace_employe");
+                    break;
+                case 3: // Administrateur
+                    header("Location: index.php?page=espace_administrateur");
+                    break;
+                default:
+                    session_destroy();
+                    header("Location: index.php?page=connexion");
+                    break;
+            }
             exit;
         } else {
             $message = "Nom d'utilisateur ou mot de passe incorrect.";
@@ -31,5 +48,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// Inclure la vue de connexion
 include APP_PATH . '/vues/connexion.php';
-?> 

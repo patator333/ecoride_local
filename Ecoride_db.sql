@@ -152,6 +152,8 @@ INSERT INTO compte (nom, mail, password, date_creation, credit, id_type_compte, 
 ('Claire Leroy', 'claire@ecoride.fr', 'pwdClaire', '2025-08-20', 200, 3, 3),
 ('David Morel', 'david@ecoride.fr', 'pwdDavid', '2025-10-05', 80, 2, 2),
 ('Emma Lopez', 'emma@ecoride.fr', 'pwdEmma', '2025-09-10', 0, 1, 1);
+('Employe', 'employe@ecoride.fr', 'employe', '2025-09-10', 0, 2, 1);
+
 
 INSERT INTO vehicule (immatriculation, date_de_premiere_immatriculation, marque, modele, couleur, places_disponibles, id_utilisateur, id_type_motorisation) VALUES
 ('AB-123-CD', '2022-06-10', 'Peugeot', '208', 'bleu', 4, 2, 1),
