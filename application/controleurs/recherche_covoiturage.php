@@ -37,4 +37,4 @@ if (!empty($ville_depart) && !empty($ville_arrivee) && !empty($date_depart)) { /
     }
 }
 
-include APP_PATH . '/vues/recherche_covoiturage.php'; 
+include APP_PATH . '/vues/recherche_covoiturage.php';  

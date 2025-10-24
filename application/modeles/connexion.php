@@ -13,11 +13,18 @@ function verifierConnexion($email, $password) {
     $user = $stmt->fetch(PDO::FETCH_ASSOC); // récupère une seule ligne du résultat de la requête
                                             // PDO::FETCH_ASSOC la ligne récupérée sera un tableau associatif
 
-    if ($user && isset($user['password']) && $user['password'] === $password) { // si l'utilisateur existe et que le mot de passe concorde en bdd
+    if ($user && isset($user['password'])) {
 
-        return $user;  // résultat de la fonction qui est transmise au controleur
-    }
+        // Cas 1 : le mot de passe est haché
+        if (password_verify($password, $user['password'])) {
+            return $user;
+        }
+
+        //  Cas 2 : le mot de passe est encore en clair dans la BDD
+        if ($user['password'] === $password) {
+            return $user;
+        }
 
     return false;
+    }
 }
- 
