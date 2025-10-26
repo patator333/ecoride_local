@@ -55,7 +55,7 @@ require_once ROOT_PATH . '/config/config.php'; // $pdo doit être défini
         return "Erreur lors de la création du voyage : " . $e->getMessage();
     }
 }
-*/
+*/ 
 /**
  * Récupère covoiturages programmés créés ou réservés par un utilisateur
  */

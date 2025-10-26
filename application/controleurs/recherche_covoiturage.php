@@ -4,7 +4,7 @@ require_once APP_PATH . '/modeles/covoiturage.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
+ 
 // Récupérer les filtres depuis GET
 $ville_depart  = trim($_GET['ville_depart'] ?? '');
 $ville_arrivee = trim($_GET['ville_arrivee'] ?? '');

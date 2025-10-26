@@ -75,16 +75,14 @@
                             </div>
 
                             <div class="mt-2 text-end">
-                                <a href="?page=participer_covoiturage&id=<?= $cov_id ?>" class="btn btn-success btn-sm">
-                                    Participer
-                                </a>
+                                <a href="?page=participer_covoiturage&id=<?= $cov_id ?>" class="btn btn-success btn-sm">Participer</a>
                             </div>
                         </div>
                     </div>  
                 </div>
             <?php endforeach; ?>
         </div>
-
+ 
         <!-- Pagination -->
         <?php if(!empty($total_pages) && !empty($page_num)): ?>
         <nav aria-label="Page navigation">
