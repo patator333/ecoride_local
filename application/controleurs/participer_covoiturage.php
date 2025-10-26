@@ -4,7 +4,7 @@ require_once APP_PATH . '/modeles/reservation.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
+ 
 // Vérifier si l'utilisateur est connecté
 if (empty($_SESSION['user'])) {
     $_SESSION['message'] = "Vous devez être connecté pour participer.";

@@ -1,5 +1,5 @@
 <?php
-require_once ROOT_PATH . '/config/config.php';  // renvoie vers la connexion à la bdd
+require_once ROOT_PATH . '/config/config.php'; // renvoie vers la connexion à la bdd
 
 function verifierConnexion($email, $password) {
     global $pdo;  // rend la variable $pdo accessible dans la fonction

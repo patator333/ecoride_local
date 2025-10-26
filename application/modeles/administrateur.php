@@ -1,5 +1,5 @@
 <?php
-// Fichier : /modeles/administrateur.php
+
 require_once ROOT_PATH . '/config/config.php';
 
 // Créer un compte employé

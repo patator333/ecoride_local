@@ -23,7 +23,7 @@ require_once ROOT_PATH . '/config/config.php'; // $pdo doit être défini
 
         // INSERT covoiturage
         $stmt = $pdo->prepare("
-            INSERT INTO covoiturage
+            INSERT INTO covoiturage 
             (id_utilisateur, id_vehicule, lieu_depart, lieu_arrivee, date_depart, heure_depart, date_arrivee, heure_arrivee, prix_par_personne)
             VALUES
             (:id_utilisateur, :id_vehicule, :lieu_depart, :lieu_arrivee, :date_depart, :heure_depart, :date_arrivee, :heure_arrivee, :prix_par_personne)
@@ -172,3 +172,19 @@ function reserverCovoiturage($id_utilisateur, $id_covoiturage) {
         return ['success' => false, 'message' => 'Erreur lors de la réservation : ' . $e->getMessage()];
     }
 }
+
+/**
+ * Retourne le statut d'un covoiturage à partir de la table statut_covoiturage
+ */
+/*
+function getStatutCovoiturage(int $id_covoiturage): string {
+    global $pdo;
+
+    $stmt = $pdo->prepare("SELECT statut FROM statut_covoiturage WHERE id_covoiturage = :id LIMIT 1");
+    $stmt->execute([':id' => $id_covoiturage]);
+    $stat = $stmt->fetchColumn();
+
+    if (!$stat) return 'inconnu'; // si aucun statut trouvé
+
+    return $stat;
+}*/

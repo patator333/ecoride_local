@@ -1,77 +1,58 @@
 <?php
 require_once ROOT_PATH . '/config/config.php';
+require_once APP_PATH . '/modeles/reservation.php';
 
-function rechercherCovoiturages($ville_depart, $ville_arrivee, $date_depart, $filtres=[], $limit=5, $offset=0) {
+/**
+ * Récupérer les covoiturages programmés d'un utilisateur avec leur statut
+ */
+function getCovoituragesProgrammesByUtilisateur(int $id_utilisateur): array {
     global $pdo;
 
-    $sql = "SELECT c.*, v.marque, v.modele, v.id_type_motorisation,
-                   u.nom AS nom_chauffeur, u.photo AS photo_chauffeur,
-                   (v.id_type_motorisation = 4) AS electrique
-            FROM covoiturage c
-            JOIN vehicule v ON c.id_vehicule = v.id_vehicule
-            JOIN compte u ON c.id_utilisateur = u.id_utilisateur
-            WHERE c.lieu_depart LIKE :ville_depart
-              AND c.lieu_arrivee LIKE :ville_arrivee
-              AND c.date_depart = :date_depart";
-
-    $params = [
-        ':ville_depart'=>"%$ville_depart%",
-        ':ville_arrivee'=>"%$ville_arrivee%",
-        ':date_depart'=>$date_depart
-    ];
-
-    if(!empty($filtres['electrique'])) $sql .= " AND v.id_type_motorisation = 4";
-    if(!empty($filtres['prix_max'])) { $sql .= " AND c.prix_par_personne <= :prix_max"; $params[':prix_max']=$filtres['prix_max']; }
-    if(!empty($filtres['duree_max'])) { $sql .= " AND TIMESTAMPDIFF(HOUR, CONCAT(c.date_depart,' ',c.heure_depart), CONCAT(c.date_arrivee,' ',c.heure_arrivee)) <= :duree_max"; $params[':duree_max']=$filtres['duree_max']; }
-
-    $sql .= " ORDER BY c.date_depart ASC LIMIT :limit OFFSET :offset";
+    $sql = "
+        SELECT c.*, 
+               s.statut, 
+               v.marque, 
+               v.modele, 
+               v.id_utilisateur AS vehicule_proprietaire,
+               u.nom AS nom_chauffeur
+        FROM covoiturage c
+        LEFT JOIN statut_covoiturage s ON c.id_covoiturage = s.id_covoiturage
+        LEFT JOIN vehicule v ON c.id_vehicule = v.id_vehicule
+        LEFT JOIN compte u ON c.id_utilisateur = u.id_utilisateur
+        WHERE c.id_utilisateur = :id_utilisateur
+        ORDER BY c.date_depart, c.heure_depart
+    ";
 
     $stmt = $pdo->prepare($sql);
-    foreach($params as $k=>$v) $stmt->bindValue($k,$v);
-    $stmt->bindValue(':limit',(int)$limit,PDO::PARAM_INT);
-    $stmt->bindValue(':offset',(int)$offset,PDO::PARAM_INT);
-    $stmt->execute();
+    $stmt->execute(['id_utilisateur' => $id_utilisateur]);
     $covoiturages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach($covoiturages as &$cov){
-        $stmt2 = $pdo->prepare("SELECT fumeur, animal, remarques_particulieres FROM preference WHERE id_utilisateur=:id_utilisateur");
-        $stmt2->execute([':id_utilisateur'=>$cov['id_utilisateur']]);
-        $cov['preferences']=$stmt2->fetch(PDO::FETCH_ASSOC) ?: null;
+    // Si aucun statut n'existe, mettre "prévu" par défaut
+    foreach ($covoiturages as &$c) {
+        if (empty($c['statut'])) {
+            $c['statut'] = 'prévu';
+        }
     }
 
     return $covoiturages;
 }
 
-function compterCovoiturages($ville_depart,$ville_arrivee,$date_depart,$filtres=[]){
+/**
+ * Changer le statut d'un covoiturage
+ */
+function changerStatutCovoiturage(int $id_covoiturage, string $statut): bool {
     global $pdo;
 
-    $sql="SELECT COUNT(*) FROM covoiturage c JOIN vehicule v ON c.id_vehicule=v.id_vehicule
-          WHERE c.lieu_depart LIKE :ville_depart AND c.lieu_arrivee LIKE :ville_arrivee AND c.date_depart=:date_depart";
+    // Vérifie si le statut existe déjà
+    $stmt = $pdo->prepare("SELECT id_statut FROM statut_covoiturage WHERE id_covoiturage=:id");
+    $stmt->execute(['id' => $id_covoiturage]);
+    $exists = $stmt->fetchColumn();
 
-    $params=[
-        ':ville_depart'=>"%$ville_depart%",
-        ':ville_arrivee'=>"%$ville_arrivee%",
-        ':date_depart'=>$date_depart
-    ];
+    if ($exists) {
+        $stmt = $pdo->prepare("UPDATE statut_covoiturage SET statut=:statut WHERE id_covoiturage=:id");
+    } else {
+        $stmt = $pdo->prepare("INSERT INTO statut_covoiturage (statut, id_covoiturage) VALUES (:statut, :id)");
+    }
 
-    if(!empty($filtres['electrique'])) $sql.=" AND v.id_type_motorisation = 4";
-    if(!empty($filtres['prix_max'])) {$sql.=" AND c.prix_par_personne <= :prix_max"; $params[':prix_max']=$filtres['prix_max'];}
-    if(!empty($filtres['duree_max'])) {$sql.=" AND TIMESTAMPDIFF(HOUR, CONCAT(c.date_depart,' ',c.heure_depart), CONCAT(c.date_arrivee,' ',c.heure_arrivee)) <= :duree_max"; $params[':duree_max']=$filtres['duree_max'];}
-
-    $stmt=$pdo->prepare($sql);
-    $stmt->execute($params);
-    return $stmt->fetchColumn();
-}
-
-function getCovoiturageById(int $id_covoiturage): ?array {
-    global $pdo;
-    $stmt=$pdo->prepare("SELECT c.*, v.marque, v.modele, v.id_type_motorisation,
-                                u.nom AS nom_chauffeur, u.photo AS photo_chauffeur
-                         FROM covoiturage c
-                         JOIN vehicule v ON c.id_vehicule=v.id_vehicule
-                         JOIN compte u ON c.id_utilisateur=u.id_utilisateur
-                         WHERE c.id_covoiturage=:id LIMIT 1");
-    $stmt->execute([':id'=>$id_covoiturage]);
-    $cov=$stmt->fetch(PDO::FETCH_ASSOC);
-    return $cov ?: null;
+    return $stmt->execute(['statut' => $statut, 'id' => $id_covoiturage]);
 }

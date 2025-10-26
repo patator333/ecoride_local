@@ -2,7 +2,7 @@
 require_once ROOT_PATH . '/config/config.php';
 
 // Vérifier les identifiants (anciens mots de passe en clair et nouveaux hashés)
-// Vérifier les identifiants (anciens mots de passe en clair et nouveaux hashés)
+
 function verifierConnexion($email, $password) {
     global $pdo;
 

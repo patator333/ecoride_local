@@ -1,13 +1,16 @@
-<?php include APP_PATH . '/vues/entete.php'; ?>
+<?php 
+include APP_PATH . '/vues/entete.php'; 
+require_once APP_PATH . '/modeles/covoiturage.php'; // assure pas de redéclaration
+?>
 <div class="container mt-4">
 
     <div class="d-flex justify-content-end mb-3">
         <a href="index.php?page=deconnexion" class="btn btn-danger btn-sm">Déconnexion</a>
     </div>
 
-    <!-- ====== ROLE UTILISATEUR ====== -->
+    <!-- ROLE UTILISATEUR -->
     <h3 class="text-center">Votre rôle</h3>
-    <?php if($message) echo "<div class='alert alert-info text-center'>$message</div>"; ?>
+    <?php if(!empty($message)) echo "<div class='alert alert-info text-center'>$message</div>"; ?>
     <form method="POST" class="text-center mb-4">
         <input type="radio" name="role" value="1" <?= $user['id_role']==1?'checked':'' ?>> Passager
         <input type="radio" name="role" value="2" <?= $user['id_role']==2?'checked':'' ?>> Chauffeur
@@ -15,17 +18,22 @@
         <button type="submit" class="btn btn-success btn-sm ms-2">Valider</button>
     </form>
 
-    <!-- ====== VEHICULES ====== -->
-    <?php if($user['id_role'] != 'passager'): ?>
+    <!-- VEHICULES -->
+    <?php if($user['id_role'] != 1): ?>
         <h3 class="text-center">Mes véhicules</h3>
-        <?php if($vehicule_message) echo "<div class='alert alert-info text-center'>$vehicule_message</div>"; ?>
+        <?php if(!empty($vehicule_message)) echo "<div class='alert alert-info text-center'>$vehicule_message</div>"; ?>
         <?php if(count($vehicules)==0): ?>
             <p class="text-center">Aucun véhicule enregistré.</p>
         <?php else: ?>
             <table class="table table-striped text-center">
                 <thead>
                     <tr>
-                        <th>Immatriculation</th><th>Date 1ère immat.</th><th>Marque</th><th>Modèle</th><th>Places</th><th>Motorisation</th>
+                        <th>Immatriculation</th>
+                        <th>Date 1ère immat.</th>
+                        <th>Marque</th>
+                        <th>Modèle</th>
+                        <th>Places</th>
+                        <th>Motorisation</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,12 +51,11 @@
             </table>
         <?php endif; ?>
 
-        <!-- Formulaire ajout véhicule -->
         <h4 class="text-center mt-4">Ajouter un véhicule</h4>
         <form method="POST" class="mb-4">
             <div class="row mb-2">
                 <div class="col"><input type="text" name="immatriculation" class="form-control" placeholder="Immatriculation" required></div>
-                <div class="col"><input type="date" name="date_de_premiere_immatriculation" class="form-control" placeholder="Date 1ère immatriculation" required></div>
+                <div class="col"><input type="date" name="date_de_premiere_immatriculation" class="form-control" required></div>
             </div>
             <div class="row mb-2">
                 <div class="col"><input type="text" name="marque" class="form-control" placeholder="Marque" required></div>
@@ -74,9 +81,9 @@
         </form>
     <?php endif; ?>
 
-    <!-- ====== PREFERENCES ====== -->
+    <!-- PREFERENCES -->
     <h3 class="text-center mt-4">Préférences</h3>
-    <?php if($pref_message) echo "<div class='alert alert-info text-center'>$pref_message</div>"; ?>
+    <?php if(!empty($pref_message)) echo "<div class='alert alert-info text-center'>$pref_message</div>"; ?>
     <form method="POST" class="mb-4 text-center">
         <input type="checkbox" name="fumeur" <?= (!empty($preferences['fumeur']))?'checked':'' ?>> Fumeur
         <input type="checkbox" name="animal" <?= (!empty($preferences['animal']))?'checked':'' ?>> Animal
@@ -84,43 +91,53 @@
         <button type="submit" name="valider_preferences" class="btn btn-success btn-sm">Valider</button>
     </form>
 
-    <!-- ====== CREER VOYAGE ====== -->
-    <h3 class="text-center mt-4">Créer un voyage</h3>
-    <?php if($voyage_message) echo "<div class='alert alert-info text-center'>$voyage_message</div>"; ?>
-    <form method="POST" class="mb-4">
-        <div class="row mb-2">
-            <div class="col"><input type="text" name="ville_depart" class="form-control" placeholder="Ville de départ" required></div>
-            <div class="col"><input type="text" name="ville_arrivee" class="form-control" placeholder="Ville d'arrivée" required></div>
-        </div>
-        <div class="row mb-2">
-            <div class="col"><input type="date" name="date_depart" class="form-control" required></div>
-            <div class="col"><input type="time" name="heure_depart" class="form-control" required></div>
-        </div>
-        <div class="row mb-2">
-            <div class="col"><input type="date" name="date_arrivee" class="form-control" required></div>
-            <div class="col"><input type="time" name="heure_arrivee" class="form-control" required></div>
-        </div>
-        <div class="row mb-2">
-            <div class="col"><input type="number" name="prix" class="form-control" placeholder="Prix (2 crédits pour la plateforme inclus)" required></div>
-            <div class="col">
-                <select name="id_vehicule" class="form-control" required>
-                    <?php foreach($vehicules as $v): ?>
-                        <option value="<?= $v['id_vehicule'] ?>"><?= htmlspecialchars($v['marque'].' '.$v['modele'].' ('.$v['immatriculation'].')') ?></option>
-                    <?php endforeach; ?>
-                </select>
+    <!-- CREER VOYAGE -->
+    <?php if($user['id_role'] != 1): ?>
+        <h3 class="text-center mt-4">Créer un voyage</h3>
+        <?php if(!empty($voyage_message)) echo "<div class='alert alert-info text-center'>$voyage_message</div>"; ?>
+        <form method="POST" class="mb-4">
+            <div class="row mb-2">
+                <div class="col"><input type="text" name="ville_depart" class="form-control" placeholder="Ville de départ" required></div>
+                <div class="col"><input type="text" name="ville_arrivee" class="form-control" placeholder="Ville d'arrivée" required></div>
             </div>
-        </div>
-        <button type="submit" name="creer_voyage" class="btn btn-primary">Valider le voyage</button>
-    </form>
- 
-    <!-- ====== HISTORIQUE ====== -->
+            <div class="row mb-2">
+                <div class="col"><input type="date" name="date_depart" class="form-control" required></div>
+                <div class="col"><input type="time" name="heure_depart" class="form-control" required></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col"><input type="date" name="date_arrivee" class="form-control" required></div>
+                <div class="col"><input type="time" name="heure_arrivee" class="form-control" required></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col"><input type="number" name="prix" class="form-control" placeholder="Prix (2 crédits inclus)" required></div>
+                <div class="col">
+                    <select name="id_vehicule" class="form-control" required>
+                        <?php foreach($vehicules as $v): ?>
+                            <option value="<?= $v['id_vehicule'] ?>"><?= htmlspecialchars($v['marque'].' '.$v['modele'].' ('.$v['immatriculation'].')') ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" name="creer_voyage" class="btn btn-primary">Valider le voyage</button>
+        </form>
+    <?php endif; ?>
+
+    <!-- HISTORIQUE -->
     <h3 class="text-center mt-4">Historique des covoiturages</h3>
-    <?php if(count($historique)==0): ?>
+    <?php if(empty($historique)): ?>
         <p class="text-center">Aucun covoiturage réalisé.</p>
     <?php else: ?>
         <table class="table table-striped">
             <thead>
-                <tr><th>Départ</th><th>Arrivée</th><th>Date</th><th>Heure départ</th><th>Heure arrivée</th><th>Prix</th><th>Chauffeur</th></tr>
+                <tr>
+                    <th>Départ</th>
+                    <th>Arrivée</th>
+                    <th>Date</th>
+                    <th>Heure départ</th>
+                    <th>Heure arrivée</th>
+                    <th>Prix</th>
+                    <th>Chauffeur</th>
+                </tr>
             </thead>
             <tbody>
                 <?php foreach($historique as $h): ?>
@@ -136,20 +153,32 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
-    <?php endif; ?> 
+    <?php endif; ?>
 
-    <!-- ====== COVOITURAGES PROGRAMMES ====== -->
+    
+    <!-- COVOITURAGES PROGRAMMES -->
     <h3 class="text-center mt-4">Covoiturages programmés</h3>
-    <?php if(count($covoiturages_programmes)==0): ?>
+    <?php if(empty($covoiturages_programmes)): ?>
         <p class="text-center">Aucun covoiturage programmé.</p>
     <?php else: ?>
         <table class="table table-striped">
             <thead>
-                <tr><th>#</th><th>Départ</th><th>Arrivée</th><th>Date départ</th><th>Heure départ</th><th>Chauffeur</th><th>Véhicule</th></tr>
+                <tr>
+                    <th>#</th>
+                    <th>Départ</th>
+                    <th>Arrivée</th>
+                    <th>Date départ</th>
+                    <th>Heure départ</th>
+                    <th>Chauffeur</th>
+                    <th>Véhicule</th>
+                    <th>Actions / Statut</th>
+                </tr>
             </thead>
             <tbody>
-                <?php foreach($covoiturages_programmes as $c): ?>
-                <tr>
+                <?php foreach($covoiturages_programmes as $c): 
+                    $statut = $c['statut'];
+                ?>
+                <tr class="<?= $statut=='annulé' ? 'table-danger' : ($statut=='en_cours' ? 'table-warning' : '') ?>">
                     <td><?= $c['id_covoiturage'] ?></td>
                     <td><?= htmlspecialchars($c['lieu_depart']) ?></td>
                     <td><?= htmlspecialchars($c['lieu_arrivee']) ?></td>
@@ -157,6 +186,17 @@
                     <td><?= $c['heure_depart'] ?></td>
                     <td><?= htmlspecialchars($c['nom_chauffeur']) ?></td>
                     <td><?= htmlspecialchars($c['marque'].' '.$c['modele']) ?></td>
+                    <td>
+                        <?php if($c['id_utilisateur'] == $_SESSION['user']['id_utilisateur']): ?>
+                            <?php if($statut=='prévu'): ?>
+                                <a href="index.php?page=action_covoiturage&id=<?= $c['id_covoiturage'] ?>&action=demarrer" class="btn btn-success btn-sm">Démarrer</a>
+                            <?php elseif($statut=='en_cours'): ?>
+                                <a href="index.php?page=action_covoiturage&id=<?= $c['id_covoiturage'] ?>&action=terminer" class="btn btn-warning btn-sm">Terminer</a>
+                            <?php endif; ?>
+                            <a href="index.php?page=action_covoiturage&id=<?= $c['id_covoiturage'] ?>&action=annuler" class="btn btn-danger btn-sm">Annuler</a>
+                        <?php endif; ?>
+                        <span class="badge bg-info text-dark"><?= ucfirst($statut) ?></span>
+                    </td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
