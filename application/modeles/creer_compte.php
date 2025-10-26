@@ -14,9 +14,12 @@ function creerCompte($nom, $mail, $mot_de_passe) {
     // Hachage du mot de passe
     $hash = password_hash($mot_de_passe, PASSWORD_DEFAULT);
 
-    // Insertion du compte
-    $stmt = $pdo->prepare("INSERT INTO compte (nom, mail, password, credit, date_creation) 
-                           VALUES (:nom, :mail, :password, 20, NOW())");
+    // Insertion du compte avec id_type_compte forcé à 1
+    $stmt = $pdo->prepare("
+        INSERT INTO compte (nom, mail, password, credit, date_creation, id_type_compte)
+        VALUES (:nom, :mail, :password, 20, NOW(), 1)
+    ");
+
     $ok = $stmt->execute([
         ':nom' => $nom,
         ':mail' => $mail,
@@ -24,7 +27,7 @@ function creerCompte($nom, $mail, $mot_de_passe) {
     ]);
 
     if ($ok) {
-        return ['success' => true, 'message' => "Compte créé avec succès !"]; // si l'insertion en bdd est validée
+        return ['success' => true, 'message' => "Compte créé avec succès !"];
     } else {
         return ['success' => false, 'message' => "Erreur lors de la création du compte."];
     }

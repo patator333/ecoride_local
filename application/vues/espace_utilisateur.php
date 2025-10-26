@@ -4,7 +4,7 @@
     <div class="d-flex justify-content-end mb-3">
         <a href="index.php?page=deconnexion" class="btn btn-danger btn-sm">Déconnexion</a>
     </div>
-
+  
     <!-- ====== ROLE UTILISATEUR ====== -->
     <h3 class="text-center">Votre rôle</h3>
     <?php if($message) echo "<div class='alert alert-info text-center'>$message</div>"; ?>

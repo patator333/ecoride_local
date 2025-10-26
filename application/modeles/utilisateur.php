@@ -2,6 +2,7 @@
 require_once ROOT_PATH . '/config/config.php';
 
 // Vérifier les identifiants (anciens mots de passe en clair et nouveaux hashés)
+// Vérifier les identifiants (anciens mots de passe en clair et nouveaux hashés)
 function verifierConnexion($email, $password) {
     global $pdo;
 
@@ -10,11 +11,19 @@ function verifierConnexion($email, $password) {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
-        // Mot de passe hashé
+        // 🔹 Vérifier si le compte est actif
+        if (!$user['actif']) {
+            return [
+                'error' => "Votre compte est suspendu. Veuillez contacter l’administrateur."
+            ];
+        }
+
+        // 🔹 Mot de passe hashé
         if (password_verify($password, $user['password'])) {
             return $user;
         }
-        // Mot de passe en clair (ancien compte)
+
+        // 🔹 Mot de passe en clair (ancien compte)
         if ($user['password'] === $password) {
             // Mettre à jour le mot de passe avec hash pour sécuriser
             $newHash = password_hash($password, PASSWORD_DEFAULT);
@@ -22,9 +31,11 @@ function verifierConnexion($email, $password) {
             $update->execute([':hash' => $newHash, ':id' => $user['id_utilisateur']]);
             return $user;
         }
-    }
+    } 
+
     return false;
 }
+
 
 // Récupérer un utilisateur par ID
 function getUtilisateurById($id_utilisateur) {

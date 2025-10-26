@@ -49,6 +49,10 @@ switch ($page) {
         include APP_PATH . '/controleurs/espace_employe.php';
         break;
 
+    case 'espace_administrateur':
+        include APP_PATH . '/controleurs/espace_administrateur.php';
+        break;
+
     default:
         echo "Erreur 404 - Page non trouvée";
         break;

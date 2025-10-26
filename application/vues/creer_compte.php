@@ -29,4 +29,4 @@
     </form>
 </div>
 
-<?php include APP_PATH . '/vues/pied_de_page.php'; ?>
+<?php include APP_PATH . '/vues/pied_de_page.php'; ?> 

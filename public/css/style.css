@@ -32,3 +32,14 @@ p {
     height: 250px;      
     border-radius: 10px; 
 }
+
+/* Taille réduite des graphiques */
+.graph-container {
+    width: 50%;       /* moitié de la largeur normale */
+    margin: 0 auto;   /* centrage horizontal */
+}
+
+canvas {
+    width: 100% !important;
+    height: auto !important;
+}

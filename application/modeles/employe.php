@@ -49,3 +49,4 @@ function traiterAvis($id_avis, $action) {
     $stmt = $pdo->prepare("UPDATE avis SET statut_validation = :valide WHERE id_avis = :id");
     return $stmt->execute([':valide' => $valide, ':id' => $id_avis]);
 }
+ 

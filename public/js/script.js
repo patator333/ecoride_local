@@ -8,3 +8,5 @@ function confirmerParticipation(prix) {
     if (!confirm("Confirmez-vous vouloir participer à ce covoiturage ?")) return false;
     return confirm("Ce trajet coûte " + prix + " crédits. Souhaitez-vous les utiliser ?");
 }
+
+

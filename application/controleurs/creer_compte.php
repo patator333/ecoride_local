@@ -21,4 +21,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // récupération du formulaire re
     }
 }
 
-include APP_PATH . '/vues/creer_compte.php';
+include APP_PATH . '/vues/creer_compte.php'; 

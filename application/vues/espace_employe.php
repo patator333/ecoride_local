@@ -1,6 +1,11 @@
 <?php include APP_PATH . '/vues/entete.php'; ?>
 
 <div class="container mt-5">
+    
+    <div class="d-flex justify-content-end mb-3">
+        <a href="index.php?page=deconnexion" class="btn btn-danger btn-sm">Déconnexion</a>
+    </div>
+
     <h2 class="text-center mb-4">Espace Employé</h2>
 
     <!-- Avis à valider -->
@@ -76,3 +81,4 @@
 </div>
 
 <?php include APP_PATH . '/vues/pied_de_page.php'; ?>
+ 
