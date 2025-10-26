@@ -45,16 +45,17 @@ CREATE TABLE type_motorisation (
 CREATE TABLE vehicule (
     id_vehicule INT AUTO_INCREMENT PRIMARY KEY,
     immatriculation VARCHAR(50) NOT NULL,
-    date_de_premiere_immatriculation DATE,
-    marque VARCHAR(50),
-    modele VARCHAR(50),
+    date_de_premiere_immatriculation DATE NOT NULL,
+    marque VARCHAR(50) NOT NULL,
+    modele VARCHAR(50) NOT NULL,
     couleur VARCHAR(50),
-    places_disponibles INT,
-    id_utilisateur INT,
-    id_type_motorisation INT,
+    places_disponibles INT NOT NULL,
+    id_utilisateur INT NOT NULL,
+    id_type_motorisation INT NOT NULL,
     FOREIGN KEY (id_utilisateur) REFERENCES compte(id_utilisateur),
     FOREIGN KEY (id_type_motorisation) REFERENCES type_motorisation(id_type_motorisation)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 
 CREATE TABLE covoiturage (
     id_covoiturage INT AUTO_INCREMENT PRIMARY KEY,

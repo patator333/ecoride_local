@@ -17,7 +17,7 @@ function verifierConnexion($email, $password) {
                 'error' => "Votre compte est suspendu. Veuillez contacter l’administrateur."
             ];
         }
-
+ 
         // 🔹 Mot de passe hashé
         if (password_verify($password, $user['password'])) {
             return $user;
