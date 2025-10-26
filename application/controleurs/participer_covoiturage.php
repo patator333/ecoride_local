@@ -21,7 +21,7 @@ if (!$id_covoiturage) {
     exit;
 }
 
-// Récupérer les informations du covoiturage
+// Récupérer covoiturage
 $cov = getCovoiturageById($id_covoiturage);
 if (!$cov) {
     $_SESSION['message'] = ['type'=>'danger', 'texte'=>"Covoiturage introuvable."];
@@ -36,7 +36,7 @@ if (($cov['nombre_places'] ?? 0) <= 0) {
     exit;
 }
 
-// Vérifier crédit utilisateur
+// Vérifier crédit
 $prix = $cov['prix_par_personne'] ?? 0;
 if (($_SESSION['user']['credit'] ?? 0) < $prix) {
     $_SESSION['message'] = ['type'=>'warning', 'texte'=>"Crédit insuffisant."];
@@ -44,17 +44,17 @@ if (($_SESSION['user']['credit'] ?? 0) < $prix) {
     exit;
 }
 
-// Appel du modèle pour créer la réservation
+// Appel modèle pour créer la réservation
 $result = reserverCovoiturage($id_utilisateur, $id_covoiturage);
 
-// Débiter le crédit si succès
+// Débiter crédit si succès
 if ($result['success']) {
     $_SESSION['user']['credit'] -= $prix;
-    $_SESSION['message'] = ['type'=>'success', 'texte'=>$result['message'] ?? "Réservation réussie."];
+    $_SESSION['message'] = ['type'=>'success','texte'=>$result['message']];
 } else {
-    $_SESSION['message'] = ['type'=>'danger', 'texte'=>$result['message'] ?? "Erreur lors de la réservation."];
+    $_SESSION['message'] = ['type'=>'danger','texte'=>$result['message']];
 }
 
-// Redirection vers l'espace utilisateur
+// Redirection vers espace utilisateur
 header("Location: ?page=espace_utilisateur");
 exit;
