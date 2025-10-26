@@ -1,4 +1,4 @@
-<?php include APP_PATH . '/vues/entete.php';?>
+<?php include APP_PATH . '/vues/entete.php'; ?>
 
 <div class="container mt-5">
     <h2 class="text-center mb-4">Recherche de covoiturage</h2>
@@ -21,12 +21,13 @@
         <div class="col-md-1 d-grid">
             <button type="submit" class="btn btn-primary">Valider</button>
         </div>
-    </form>
+    </form> 
 
     <!-- Résultats -->
     <?php if (!empty($covoiturages)): ?>
         <div class="row">
             <?php foreach($covoiturages as $cov): ?>
+                <?php $cov_id = $cov['id_covoiturage'] ?? 0; ?>
                 <div class="col-md-6 mb-3">
                     <div class="card h-100">
                         <div class="card-body">
@@ -35,7 +36,7 @@
                             <p class="mb-1">Heure : <?= htmlspecialchars($cov['heure_depart']) ?></p>
                             <p class="mb-1">Crédit demandé : <?= htmlspecialchars($cov['prix_par_personne']) ?> €</p>
                             <p class="mb-1">Places restantes : <?= htmlspecialchars($cov['nombre_places']) ?></p>
-                            <p class="mb-1">Chauffeur : <?= htmlspecialchars($cov['nom_chauffeur'] ?? '') ?></p>
+                            <p class="mb-1">Chauffeur : <?= htmlspecialchars($cov['nom_chauffeur'] ?? '-') ?></p>
                             <p class="mb-1">
                                 <?php if(!empty($cov['photo_chauffeur'])): ?>
                                     <img src="<?= PUBLIC_URL ?>/uploads/<?= htmlspecialchars($cov['photo_chauffeur']) ?>" 
@@ -51,28 +52,30 @@
                             <?php endif; ?>
 
                             <!-- Bouton voir détails -->
-                            <button class="btn btn-info btn-sm mt-2" type="button" onclick="toggleDetails('details-<?= $cov['id_covoiturage'] ?>')">
+                            <button class="btn btn-info btn-sm mt-2" type="button" 
+                                    onclick="toggleDetails('details-<?= $cov_id ?>')">
                                 Voir détails
                             </button>
 
                             <!-- Section détails cachée -->
-                            <div id="details-<?= $cov['id_covoiturage'] ?>" class="mt-2" style="display:none; border-top:1px solid #ddd; padding-top:10px;">
-                                <p>Marque véhicule : <?= htmlspecialchars($cov['marque']) ?></p>
-                                <p>Modèle véhicule : <?= htmlspecialchars($cov['modele']) ?></p>
-                                <?php if (!empty($cov['preferences'])): ?>
-                                    <p>Préférences chauffeur :</p>
-                                    <ul>
-                                        <li>Fumeur : <?= $cov['preferences']['fumeur'] ? 'Oui' : 'Non' ?></li>
-                                        <li>Animaux : <?= $cov['preferences']['animal'] ? 'Oui' : 'Non' ?></li>
-                                        <li>Remarques : <?= htmlspecialchars($cov['preferences']['remarques_particulieres'] ?? '-') ?></li>
-                                    </ul>
-                                <?php else: ?>
-                                    <p>Aucune préférence renseignée.</p>
-                                <?php endif; ?>
+                            <div id="details-<?= $cov_id ?>" class="mt-2" style="display:none; border-top:1px solid #ddd; padding-top:10px;">
+                                <p>Marque véhicule : <?= htmlspecialchars($cov['marque'] ?? '-') ?></p>
+                                <p>Modèle véhicule : <?= htmlspecialchars($cov['modele'] ?? '-') ?></p>
+                                <?php 
+                                    $prefs = $cov['preferences'] ?? ['fumeur'=>0,'animal'=>0,'remarques_particulieres'=>'-'];
+                                ?>
+                                <p>Préférences chauffeur :</p>
+                                <ul>
+                                    <li>Fumeur : <?= $prefs['fumeur'] ? 'Oui' : 'Non' ?></li>
+                                    <li>Animaux : <?= $prefs['animal'] ? 'Oui' : 'Non' ?></li>
+                                    <li>Remarques : <?= htmlspecialchars($prefs['remarques_particulieres'] ?? '-') ?></li>
+                                </ul>
                             </div>
 
                             <div class="mt-2 text-end">
-                                <a href="<?= PUBLIC_URL ?>/?page=participer&id=<?= $cov['id_covoiturage'] ?>" class="btn btn-success">Participer</a>
+                                <a href="?page=participer_covoiturage&id=<?= $cov_id ?>" class="btn btn-success btn-sm">
+                                    Participer
+                                </a>
                             </div>
                         </div>
                     </div>  
@@ -95,6 +98,15 @@
     <?php endif; ?>
 </div>
 
-<script src="<?= PUBLIC_URL ?>/js/script.js"></script>
+<script>
+function toggleDetails(id) {
+    const el = document.getElementById(id);
+    if(el.style.display === 'none' || el.style.display === '') {
+        el.style.display = 'block';
+    } else {
+        el.style.display = 'none';
+    }
+}
+</script>
 
-<?php include APP_PATH . '/vues/pied_de_page.php';?>
+<?php include APP_PATH . '/vues/pied_de_page.php'; ?>

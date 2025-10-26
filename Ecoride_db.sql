@@ -112,14 +112,37 @@ CREATE TABLE note (
     FOREIGN KEY (id_utilisateur) REFERENCES compte(id_utilisateur)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS reservation;
+
 CREATE TABLE reservation (
-    id_utilisateur INT,
-    id_covoiturage INT,
-    date_reservation DATE,
-    PRIMARY KEY (id_utilisateur, id_covoiturage),
-    FOREIGN KEY (id_utilisateur) REFERENCES compte(id_utilisateur),
-    FOREIGN KEY (id_covoiturage) REFERENCES covoiturage(id_covoiturage)
+    id_reservation INT AUTO_INCREMENT PRIMARY KEY,
+    id_utilisateur INT NOT NULL,
+    id_covoiturage INT NOT NULL,
+    date_reservation DATETIME DEFAULT CURRENT_TIMESTAMP,
+    statut ENUM('en_attente', 'confirmee', 'annulee') DEFAULT 'confirmee', 
+    /* ENUM champ à choix limité en_attente -> la demande vient d'être faite, confirmée -> validée par un chauffeur, annulée -> réservation annulée*/
+
+    CONSTRAINT fk_reservation_utilisateur
+        FOREIGN KEY (id_utilisateur) REFERENCES compte(id_utilisateur)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+
+    /* CONSTRAINT -> nom pour la contrainte
+       Clé étrangère -> garantit que id_utilisateur existe dans la table compte
+       ON DELETE CASCADE -> si un utilisateur est supprimé, ses réservations sont supprimées automatiquement
+       ON UPDATE CASCADE -> si l'ID utilisateur change (rare), il est mis à jour ici aussi*/
+
+    CONSTRAINT fk_reservation_covoiturage
+        FOREIGN KEY (id_covoiturage) REFERENCES covoiturage(id_covoiturage)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+
+    /* idem mais pour le covoiturage */
+
+    UNIQUE KEY unique_reservation (id_utilisateur, id_covoiturage)
+
+    /* empèche un même utilisateur de réserver plusieurs fois le même trajet, combinaison unique */
+    
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 
 CREATE TABLE contact (
     id_contact INT AUTO_INCREMENT PRIMARY KEY,
@@ -152,7 +175,8 @@ INSERT INTO compte (nom, mail, password, date_creation, credit, id_type_compte, 
 ('Claire Leroy', 'claire@ecoride.fr', 'pwdClaire', '2025-08-20', 200, 3, 3),
 ('David Morel', 'david@ecoride.fr', 'pwdDavid', '2025-10-05', 80, 2, 2),
 ('Emma Lopez', 'emma@ecoride.fr', 'pwdEmma', '2025-09-10', 0, 1, 1);
-('Employe', 'employe@ecoride.fr', 'employe', '2025-09-10', 0, 2, 1);
+('Employe', 'employe@ecoride.fr', 'employe', '2025-09-10', 0, 2, 1)
+('Administrateur', 'administrateur@ecoride.fr', 'administrateur', '2025-09-10', 0, 3, 0);
 
 
 INSERT INTO vehicule (immatriculation, date_de_premiere_immatriculation, marque, modele, couleur, places_disponibles, id_utilisateur, id_type_motorisation) VALUES

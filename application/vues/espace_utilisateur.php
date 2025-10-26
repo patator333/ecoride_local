@@ -28,7 +28,7 @@
                         <th>Immatriculation</th><th>Date 1ère immat.</th><th>Marque</th><th>Modèle</th><th>Places</th><th>Motorisation</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody> 
                     <?php foreach($vehicules as $v): ?>
                         <tr>
                             <td><?= htmlspecialchars($v['immatriculation'] ?? '') ?></td>

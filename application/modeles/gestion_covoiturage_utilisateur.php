@@ -1,4 +1,7 @@
 <?php
+
+// Fournir les fonctions de gestion côté utilisateur
+
 require_once ROOT_PATH . '/config/config.php';
 
 // Créer un nouveau voyage avec normalisation des villes
@@ -16,7 +19,7 @@ function creerVoyage($id_utilisateur, $data) {
     $heure_depart = $data['heure_depart'];
     $date_arrivee = $data['date_arrivee'];
     $heure_arrivee = $data['heure_arrivee'];
-
+ 
     // 🔹 Préparer et exécuter la requête
     $stmt = $pdo->prepare("
         INSERT INTO covoiturage 
@@ -54,7 +57,7 @@ function getHistoriqueCovoiturages($id_utilisateur) {
     $stmt->execute([':id' => $id_utilisateur]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
+ 
 // Covoiturages programmés (futurs)
 function getCovoituragesProgrammes($id_utilisateur) {
     global $pdo;

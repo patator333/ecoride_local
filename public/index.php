@@ -53,6 +53,10 @@ switch ($page) {
         include APP_PATH . '/controleurs/espace_administrateur.php';
         break;
 
+    case 'participer_covoiturage':
+    include APP_PATH . '/controleurs/participer_covoiturage.php';
+    break;
+
     default:
         echo "Erreur 404 - Page non trouvée";
         break;
