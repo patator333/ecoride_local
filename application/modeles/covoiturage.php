@@ -3,6 +3,45 @@ require_once ROOT_PATH . '/config/config.php';
 require_once APP_PATH . '/modeles/reservation.php';
 
 /**
+ * Créer un covoiturage
+ */
+function creerVoyage(int $id_utilisateur, array $data): string {
+    global $pdo;
+
+    if (empty($data['ville_depart']) || empty($data['ville_arrivee']) ||
+        empty($data['date_depart']) || empty($data['heure_depart']) ||
+        empty($data['date_arrivee']) || empty($data['heure_arrivee']) ||
+        empty($data['prix']) || empty($data['id_vehicule'])) {
+        return "Tous les champs sont obligatoires.";
+    }
+
+    $sql = "INSERT INTO covoiturage 
+            (id_utilisateur, id_vehicule, lieu_depart, lieu_arrivee, date_depart, heure_depart, date_arrivee, heure_arrivee, prix_par_personne)
+            VALUES
+            (:id_utilisateur, :id_vehicule, :lieu_depart, :lieu_arrivee, :date_depart, :heure_depart, :date_arrivee, :heure_arrivee, :prix)";
+
+    $stmt = $pdo->prepare($sql);
+
+    $params = [
+        'id_utilisateur' => $id_utilisateur,
+        'id_vehicule'    => $data['id_vehicule'],
+        'lieu_depart'    => $data['ville_depart'],
+        'lieu_arrivee'   => $data['ville_arrivee'],
+        'date_depart'    => $data['date_depart'],
+        'heure_depart'   => $data['heure_depart'],
+        'date_arrivee'   => $data['date_arrivee'],
+        'heure_arrivee'  => $data['heure_arrivee'],
+        'prix'           => $data['prix']
+    ];
+
+    if ($stmt->execute($params)) {
+        return "Covoiturage créé avec succès.";
+    } else {
+        return "Erreur lors de la création du covoiturage.";
+    }
+}
+
+/**
  * Récupérer les covoiturages programmés d'un utilisateur avec leur statut
  */
 function getCovoituragesProgrammesByUtilisateur(int $id_utilisateur): array {
@@ -95,4 +134,74 @@ function getCovoiturageById(int $id_covoiturage): ?array {
     $cov = $stmt->fetch(PDO::FETCH_ASSOC);
 
     return $cov ?: null;
+}
+
+
+/**
+ * Compter les covoiturages correspondant aux critères
+ */
+function compterCovoiturages(array $criteres): int {
+    global $pdo;
+
+    $sql = "SELECT COUNT(*) FROM covoiturage WHERE 1=1";
+    $params = [];
+
+    if (!empty($criteres['ville_depart'])) {
+        $sql .= " AND lieu_depart = :ville_depart";
+        $params['ville_depart'] = $criteres['ville_depart'];
+    }
+    if (!empty($criteres['ville_arrivee'])) {
+        $sql .= " AND lieu_arrivee = :ville_arrivee";
+        $params['ville_arrivee'] = $criteres['ville_arrivee'];
+    }
+    if (!empty($criteres['date_depart'])) {
+        $sql .= " AND date_depart = :date_depart";
+        $params['date_depart'] = $criteres['date_depart'];
+    }
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    return (int)$stmt->fetchColumn();
+}
+
+function rechercherCovoiturages(array $criteres, int $limit, int $offset): array {
+    global $pdo;
+
+    $sql = "SELECT * FROM covoiturage WHERE 1=1";
+    $params = [];
+
+    if (!empty($criteres['ville_depart'])) {
+        $sql .= " AND lieu_depart = :ville_depart";
+        $params['ville_depart'] = $criteres['ville_depart'];
+    }
+
+    if (!empty($criteres['ville_arrivee'])) {
+        $sql .= " AND lieu_arrivee = :ville_arrivee";
+        $params['ville_arrivee'] = $criteres['ville_arrivee'];
+    }
+
+    if (!empty($criteres['date_depart'])) {
+        $sql .= " AND date_depart = :date_depart";
+        $params['date_depart'] = $criteres['date_depart'];
+    }
+
+    if (!empty($criteres['electrique'])) {
+        $sql .= " AND vehicule_electrique = 1";
+    }
+    if (!empty($criteres['prix_max'])) {
+        $sql .= " AND prix_par_personne <= :prix_max";
+        $params['prix_max'] = $criteres['prix_max'];
+    }
+
+    $sql .= " ORDER BY date_depart, heure_depart LIMIT :limit OFFSET :offset";
+    $stmt = $pdo->prepare($sql);
+
+    foreach ($params as $key => $val) {
+        $stmt->bindValue(":$key", $val);
+    }
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
