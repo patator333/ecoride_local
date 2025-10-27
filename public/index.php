@@ -54,8 +54,12 @@ switch ($page) {
         break;
 
     case 'participer_covoiturage':
-    include APP_PATH . '/controleurs/participer_covoiturage.php';
-    break;
+        include APP_PATH . '/controleurs/participer_covoiturage.php';
+        break;
+
+    case 'action_covoiturage':
+        include APP_PATH .'/controleurs/action_covoiturage.php';
+        break;
 
     default:
         echo "Erreur 404 - Page non trouvée";

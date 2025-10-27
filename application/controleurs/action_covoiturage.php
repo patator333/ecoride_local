@@ -5,6 +5,14 @@ require_once APP_PATH . '/modeles/reservation.php';
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
+// Fonction temporaire pour éviter l'erreur (ne fait rien pour l'instant)
+if (!function_exists('envoyerMail')) {
+    function envoyerMail($destinataire, $sujet, $message) {
+        // temporaire : ne fait rien
+        return true;
+    }
+}
+
 // Vérifier si l'utilisateur est connecté
 if (empty($_SESSION['user'])) {
     $_SESSION['message'] = "Vous devez être connecté.";
@@ -38,14 +46,14 @@ switch ($action) {
 
     case 'terminer':
         changerStatutCovoiturage($id_covoiturage, 'terminé');
-        // Envoyer mail à tous les participants
+        // Envoyer mail à tous les participants (fonction temporaire)
         $participants = getParticipants($id_covoiturage);
         foreach ($participants as $p) {
             envoyerMail($p['mail'], 
                         "Covoiturage terminé à valider", 
                         "Le covoiturage {$cov['lieu_depart']} → {$cov['lieu_arrivee']} est terminé. Merci de vous connecter à votre espace utilisateur pour valider.");
         }
-        $_SESSION['message'] = "Covoiturage terminé, mails envoyés aux participants.";
+        $_SESSION['message'] = "Covoiturage terminé, mails (temporaires) ignorés.";
         break;
 
     case 'annuler':

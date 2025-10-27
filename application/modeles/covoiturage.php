@@ -56,3 +56,43 @@ function changerStatutCovoiturage(int $id_covoiturage, string $statut): bool {
 
     return $stmt->execute(['statut' => $statut, 'id' => $id_covoiturage]);
 }
+
+
+/**
+ * Récupérer les participants d'un covoiturage
+ */
+function getParticipants(int $id_covoiturage): array {
+    global $pdo;
+
+    $stmt = $pdo->prepare("
+        SELECT u.nom, u.mail 
+        FROM reservation r
+        JOIN compte u ON r.id_utilisateur = u.id_utilisateur
+        WHERE r.id_covoiturage = :id_covoiturage
+    ");
+    $stmt->execute(['id_covoiturage' => $id_covoiturage]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Récupérer un covoiturage par son ID
+ */
+function getCovoiturageById(int $id_covoiturage): ?array {
+    global $pdo;
+
+    $stmt = $pdo->prepare("
+        SELECT c.*, 
+               v.marque, 
+               v.modele, 
+               u.nom AS nom_chauffeur
+        FROM covoiturage c
+        LEFT JOIN vehicule v ON c.id_vehicule = v.id_vehicule
+        LEFT JOIN compte u ON c.id_utilisateur = u.id_utilisateur
+        WHERE c.id_covoiturage = :id_covoiturage
+        LIMIT 1
+    ");
+    $stmt->execute(['id_covoiturage' => $id_covoiturage]);
+    $cov = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $cov ?: null;
+}
