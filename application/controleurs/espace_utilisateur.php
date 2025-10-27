@@ -1,7 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-// Modèles nécessaires
 require_once APP_PATH . '/modeles/utilisateur.php';
 require_once APP_PATH . '/modeles/vehicule.php';
 require_once APP_PATH . '/modeles/reservation.php';
@@ -29,6 +28,7 @@ $message = $vehicule_message = $voyage_message = $pref_message = '';
 
 // POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     if (isset($_POST['role'])) {
         $role = intval($_POST['role']);
         $message = updateRoleUtilisateur($user_id, $role);
@@ -53,8 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Historique
 $historique = getHistoriqueReservationsByUtilisateur($user_id);
 
-// Covoiturages programmés avec statut
-$covoiturages_programmes = getCovoituragesProgrammesByUtilisateur($user_id);
+// Covoiturages programmés
+$covoiturages_programmes = getCovoituragesPourUtilisateur($user_id);
 
 // Tri par date/heure
 usort($covoiturages_programmes, function($a, $b) {

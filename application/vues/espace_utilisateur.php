@@ -1,7 +1,4 @@
-<?php 
-include APP_PATH . '/vues/entete.php'; 
-require_once APP_PATH . '/modeles/covoiturage.php'; // assure pas de redéclaration
-?>
+<?php include APP_PATH . '/vues/entete.php'; ?>
 <div class="container mt-4">
 
     <div class="d-flex justify-content-end mb-3">
@@ -10,45 +7,54 @@ require_once APP_PATH . '/modeles/covoiturage.php'; // assure pas de redéclarat
 
     <!-- ROLE UTILISATEUR -->
     <h3 class="text-center">Votre rôle</h3>
-    <?php if(!empty($message)) echo "<div class='alert alert-info text-center'>$message</div>"; ?>
+    <?php if(!empty($message)): ?>
+        <div class="alert alert-info text-center"><?= htmlspecialchars($message) ?></div>
+    <?php endif; ?>
     <form method="POST" class="text-center mb-4">
-        <input type="radio" name="role" value="1" <?= $user['id_role']==1?'checked':'' ?>> Passager
-        <input type="radio" name="role" value="2" <?= $user['id_role']==2?'checked':'' ?>> Chauffeur
-        <input type="radio" name="role" value="3" <?= $user['id_role']==3?'checked':'' ?>> Chauffeur & Passager
-        <button type="submit" class="btn btn-success btn-sm ms-2">Valider</button>
+        <div class="d-flex justify-content-center gap-3">
+            <label><input type="radio" name="role" value="1" <?= ($user['id_role']==1)?'checked':'' ?>> Passager</label>
+            <label><input type="radio" name="role" value="2" <?= ($user['id_role']==2)?'checked':'' ?>> Chauffeur</label>
+            <label><input type="radio" name="role" value="3" <?= ($user['id_role']==3)?'checked':'' ?>> Chauffeur & Passager</label>
+        </div>
+        <button type="submit" class="btn btn-success btn-sm mt-2">Valider</button>
     </form>
 
     <!-- VEHICULES -->
     <?php if($user['id_role'] != 1): ?>
         <h3 class="text-center">Mes véhicules</h3>
-        <?php if(!empty($vehicule_message)) echo "<div class='alert alert-info text-center'>$vehicule_message</div>"; ?>
+        <?php if(!empty($vehicule_message)): ?>
+            <div class="alert alert-info text-center"><?= htmlspecialchars($vehicule_message) ?></div>
+        <?php endif; ?>
+
         <?php if(count($vehicules)==0): ?>
             <p class="text-center">Aucun véhicule enregistré.</p>
         <?php else: ?>
-            <table class="table table-striped text-center">
-                <thead>
-                    <tr>
-                        <th>Immatriculation</th>
-                        <th>Date 1ère immat.</th>
-                        <th>Marque</th>
-                        <th>Modèle</th>
-                        <th>Places</th>
-                        <th>Motorisation</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach($vehicules as $v): ?>
+            <div class="table-responsive">
+                <table class="table table-striped text-center">
+                    <thead>
                         <tr>
-                            <td><?= htmlspecialchars($v['immatriculation'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($v['date_de_premiere_immatriculation'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($v['marque'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($v['modele'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($v['places_disponibles'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($v['motorisation'] ?? $v['id_type_motorisation']) ?></td>
+                            <th>Immatriculation</th>
+                            <th>Date 1ère immat.</th>
+                            <th>Marque</th>
+                            <th>Modèle</th>
+                            <th>Places</th>
+                            <th>Motorisation</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach($vehicules as $v): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($v['immatriculation'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($v['date_de_premiere_immatriculation'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($v['marque'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($v['modele'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($v['places_disponibles'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($v['motorisation'] ?? $v['id_type_motorisation']) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         <?php endif; ?>
 
         <h4 class="text-center mt-4">Ajouter un véhicule</h4>
@@ -83,10 +89,14 @@ require_once APP_PATH . '/modeles/covoiturage.php'; // assure pas de redéclarat
 
     <!-- PREFERENCES -->
     <h3 class="text-center mt-4">Préférences</h3>
-    <?php if(!empty($pref_message)) echo "<div class='alert alert-info text-center'>$pref_message</div>"; ?>
+    <?php if(!empty($pref_message)): ?>
+        <div class="alert alert-info text-center"><?= htmlspecialchars($pref_message) ?></div>
+    <?php endif; ?>
     <form method="POST" class="mb-4 text-center">
-        <input type="checkbox" name="fumeur" <?= (!empty($preferences['fumeur']))?'checked':'' ?>> Fumeur
-        <input type="checkbox" name="animal" <?= (!empty($preferences['animal']))?'checked':'' ?>> Animal
+        <div class="mb-2">
+            <label class="me-2"><input type="checkbox" name="fumeur" <?= (!empty($preferences['fumeur']))?'checked':'' ?>> Fumeur</label>
+            <label><input type="checkbox" name="animal" <?= (!empty($preferences['animal']))?'checked':'' ?>> Animal</label>
+        </div>
         <input type="text" name="remarques_particulieres" class="form-control my-2" placeholder="Remarques particulières" value="<?= htmlspecialchars($preferences['remarques_particulieres'] ?? '') ?>">
         <button type="submit" name="valider_preferences" class="btn btn-success btn-sm">Valider</button>
     </form>
@@ -94,7 +104,9 @@ require_once APP_PATH . '/modeles/covoiturage.php'; // assure pas de redéclarat
     <!-- CREER VOYAGE -->
     <?php if($user['id_role'] != 1): ?>
         <h3 class="text-center mt-4">Créer un voyage</h3>
-        <?php if(!empty($voyage_message)) echo "<div class='alert alert-info text-center'>$voyage_message</div>"; ?>
+        <?php if(!empty($voyage_message)): ?>
+            <div class="alert alert-info text-center"><?= htmlspecialchars($voyage_message) ?></div>
+        <?php endif; ?>
         <form method="POST" class="mb-4">
             <div class="row mb-2">
                 <div class="col"><input type="text" name="ville_depart" class="form-control" placeholder="Ville de départ" required></div>
@@ -127,80 +139,83 @@ require_once APP_PATH . '/modeles/covoiturage.php'; // assure pas de redéclarat
     <?php if(empty($historique)): ?>
         <p class="text-center">Aucun covoiturage réalisé.</p>
     <?php else: ?>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Départ</th>
-                    <th>Arrivée</th>
-                    <th>Date</th>
-                    <th>Heure départ</th>
-                    <th>Heure arrivée</th>
-                    <th>Prix</th>
-                    <th>Chauffeur</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach($historique as $h): ?>
-                <tr>
-                    <td><?= htmlspecialchars($h['lieu_depart']) ?></td>
-                    <td><?= htmlspecialchars($h['lieu_arrivee']) ?></td>
-                    <td><?= $h['date_depart'] ?></td>
-                    <td><?= $h['heure_depart'] ?></td>
-                    <td><?= $h['heure_arrivee'] ?></td>
-                    <td><?= $h['prix_par_personne'] ?></td>
-                    <td><?= htmlspecialchars($h['nom_chauffeur']) ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Départ</th>
+                        <th>Arrivée</th>
+                        <th>Date</th>
+                        <th>Heure départ</th>
+                        <th>Heure arrivée</th>
+                        <th>Prix</th>
+                        <th>Chauffeur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($historique as $h): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($h['lieu_depart'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($h['lieu_arrivee'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($h['date_depart'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($h['heure_depart'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($h['heure_arrivee'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($h['prix_par_personne'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($h['nom_chauffeur'] ?? '') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     <?php endif; ?>
 
-    
     <!-- COVOITURAGES PROGRAMMES -->
     <h3 class="text-center mt-4">Covoiturages programmés</h3>
     <?php if(empty($covoiturages_programmes)): ?>
         <p class="text-center">Aucun covoiturage programmé.</p>
     <?php else: ?>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Départ</th>
-                    <th>Arrivée</th>
-                    <th>Date départ</th>
-                    <th>Heure départ</th>
-                    <th>Chauffeur</th>
-                    <th>Véhicule</th>
-                    <th>Actions / Statut</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach($covoiturages_programmes as $c): 
-                    $statut = $c['statut'];
-                ?>
-                <tr class="<?= $statut=='annulé' ? 'table-danger' : ($statut=='en_cours' ? 'table-warning' : '') ?>">
-                    <td><?= $c['id_covoiturage'] ?></td>
-                    <td><?= htmlspecialchars($c['lieu_depart']) ?></td>
-                    <td><?= htmlspecialchars($c['lieu_arrivee']) ?></td>
-                    <td><?= $c['date_depart'] ?></td>
-                    <td><?= $c['heure_depart'] ?></td>
-                    <td><?= htmlspecialchars($c['nom_chauffeur']) ?></td>
-                    <td><?= htmlspecialchars($c['marque'].' '.$c['modele']) ?></td>
-                    <td>
-                        <?php if($c['id_utilisateur'] == $_SESSION['user']['id_utilisateur']): ?>
-                            <?php if($statut=='prévu'): ?>
-                                <a href="index.php?page=action_covoiturage&id=<?= $c['id_covoiturage'] ?>&action=demarrer" class="btn btn-success btn-sm">Démarrer</a>
-                            <?php elseif($statut=='en_cours'): ?>
-                                <a href="index.php?page=action_covoiturage&id=<?= $c['id_covoiturage'] ?>&action=terminer" class="btn btn-warning btn-sm">Terminer</a>
-                            <?php endif; ?>
-                            <a href="index.php?page=action_covoiturage&id=<?= $c['id_covoiturage'] ?>&action=annuler" class="btn btn-danger btn-sm">Annuler</a>
-                        <?php endif; ?>
-                        <span class="badge bg-info text-dark"><?= ucfirst($statut) ?></span>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Départ</th>
+                        <th>Arrivée</th>
+                        <th>Date départ</th>
+                        <th>Heure départ</th>
+                        <th>Chauffeur</th>
+                        <th>Véhicule</th>
+                        <th>Actions / Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($covoiturages_programmes as $c):
+                        $statut = $c['statut'] ?? 'prévu';
+                    ?>
+                        <tr class="<?= $statut=='annulé' ? 'table-danger' : ($statut=='en_cours' ? 'table-warning' : '') ?>">
+                            <td><?= htmlspecialchars($c['id_covoiturage'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($c['lieu_depart'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($c['lieu_arrivee'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($c['date_depart'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($c['heure_depart'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($c['nom_chauffeur'] ?? '') ?></td>
+                            <td><?= htmlspecialchars(($c['marque'] ?? '').' '.($c['modele'] ?? '')) ?></td>
+                            <td>
+                                <?php if(($c['id_utilisateur'] ?? 0) == $_SESSION['user']['id_utilisateur']): ?>
+                                    <?php if($statut=='prévu'): ?>
+                                        <a href="index.php?page=action_covoiturage&id=<?= $c['id_covoiturage'] ?>&action=demarrer" class="btn btn-success btn-sm">Démarrer</a>
+                                    <?php elseif($statut=='en_cours'): ?>
+                                        <a href="index.php?page=action_covoiturage&id=<?= $c['id_covoiturage'] ?>&action=terminer" class="btn btn-warning btn-sm">Terminer</a>
+                                    <?php endif; ?>
+                                    <a href="index.php?page=action_covoiturage&id=<?= $c['id_covoiturage'] ?>&action=annuler" class="btn btn-danger btn-sm">Annuler</a>
+                                <?php endif; ?>
+                                <span class="badge bg-info text-dark"><?= ucfirst($statut) ?></span>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     <?php endif; ?>
 
 </div>
