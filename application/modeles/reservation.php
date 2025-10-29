@@ -136,7 +136,7 @@ function getCovoituragesPourUtilisateur(int $id_utilisateur): array {
 
 /**
  * Historique des covoiturages passés
- */
+ *//*
 function getHistoriqueReservationsByUtilisateur(int $id_utilisateur): array {
     global $pdo;
 
@@ -157,7 +157,35 @@ function getHistoriqueReservationsByUtilisateur(int $id_utilisateur): array {
     ");
     $stmt->execute([':uid' => $id_utilisateur]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}*/
+
+function getHistoriqueReservationsByUtilisateur(int $id_utilisateur): array {
+    global $pdo;
+
+    // Inclure covoiturages où l'utilisateur est créateur ou participant et le statut est terminé ou annulé
+    $stmt = $pdo->prepare("
+        SELECT c.id_covoiturage, c.lieu_depart, c.lieu_arrivee,
+               c.date_depart, c.heure_depart, c.date_arrivee, c.heure_arrivee,
+               c.prix_par_personne, v.marque, v.modele,
+               u.nom AS nom_chauffeur, u.photo AS photo_chauffeur,
+               COALESCE(s.statut, 'prévu') AS statut,
+               CASE
+                   WHEN c.id_utilisateur = :uid THEN 'Créateur'
+                   ELSE 'Participant'
+               END AS role
+        FROM covoiturage c
+        LEFT JOIN vehicule v ON c.id_vehicule = v.id_vehicule
+        LEFT JOIN compte u ON c.id_utilisateur = u.id_utilisateur
+        LEFT JOIN statut_covoiturage s ON c.id_covoiturage = s.id_covoiturage
+        LEFT JOIN reservation r ON c.id_covoiturage = r.id_covoiturage AND r.id_utilisateur = :uid
+        WHERE (c.id_utilisateur = :uid OR r.id_utilisateur = :uid)
+          AND COALESCE(s.statut, 'prévu') IN ('terminé', 'annulé')
+        ORDER BY c.date_depart DESC, c.heure_depart DESC
+    ");
+    $stmt->execute([':uid' => $id_utilisateur]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 
 /**

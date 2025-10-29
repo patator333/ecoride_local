@@ -53,6 +53,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Historique
 $historique = getHistoriqueReservationsByUtilisateur($user_id);
 
+// Ajouter un flag "peut_ajouter_avis" pour chaque covoiturage terminé où l'utilisateur était passager
+foreach ($historique as &$h) {
+    $h['peut_ajouter_avis'] = false;
+
+    $role = strtolower($h['role'] ?? '');
+    $statut = strtolower($h['statut'] ?? '');
+
+    if ($statut === 'terminé') {
+        $h['peut_ajouter_avis'] = true;
+    }
+}
+unset($h);
+
+
+
 // Covoiturages programmés
 $covoiturages_programmes = getCovoituragesPourUtilisateur($user_id);
 

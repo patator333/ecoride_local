@@ -168,9 +168,9 @@
                             <a href="index.php?page=avis&id_covoiturage=<?= (int)$h['id_covoiturage'] ?>" class="btn btn-sm btn-primary">
                                 Donner un avis
                             </a>
-                        <?php else: ?>
-                            -
-                        <?php endif; ?>
+            <?php else: ?>
+    -
+            <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
