@@ -130,3 +130,42 @@ function changerStatutCovoiturage(int $id_covoiturage, string $statut): bool {
 
     return $stmt->execute([':statut' => $statut, ':id' => $id_covoiturage]);
 }
+
+
+/**
+ * Récupérer les covoiturages programmés pour un utilisateur
+ * (ceux qu'il a créés ou auxquels il participe)
+ */
+/*
+function getCovoituragesPourUtilisateur(int $id_utilisateur): array {
+    global $pdo;
+
+    // Covoiturages créés par l'utilisateur
+    $stmt1 = $pdo->prepare("
+        SELECT c.*, sc.statut, v.marque, v.modele, u.nom AS nom_chauffeur
+        FROM covoiturage c
+        LEFT JOIN statut_covoiturage sc ON c.id_covoiturage = sc.id_covoiturage
+        LEFT JOIN vehicule v ON c.id_vehicule = v.id_vehicule
+        LEFT JOIN compte u ON c.id_utilisateur = u.id_utilisateur
+        WHERE c.id_utilisateur = :id
+    ");
+    $stmt1->execute([':id' => $id_utilisateur]);
+    $crees = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+
+    // Covoiturages où l'utilisateur est participant
+    $stmt2 = $pdo->prepare("
+        SELECT c.*, sc.statut, v.marque, v.modele, u.nom AS nom_chauffeur
+        FROM reservation r
+        JOIN covoiturage c ON r.id_covoiturage = c.id_covoiturage
+        LEFT JOIN statut_covoiturage sc ON c.id_covoiturage = sc.id_covoiturage
+        LEFT JOIN vehicule v ON c.id_vehicule = v.id_vehicule
+        LEFT JOIN compte u ON c.id_utilisateur = u.id_utilisateur
+        WHERE r.id_utilisateur = :id
+        AND c.id_utilisateur != :id
+    ");
+    $stmt2->execute([':id' => $id_utilisateur]);
+    $participe = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+    // Fusionner les deux listes
+    return array_merge($crees, $participe);
+}*/

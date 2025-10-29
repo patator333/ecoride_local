@@ -9,7 +9,7 @@ function creerVoyage(int $id_utilisateur, array $data): string {
     global $pdo;
 
     try {
-        // Vérifier tous les champs
+        // Vérifier tous les champs obligatoires
         $required = ['ville_depart','ville_arrivee','date_depart','heure_depart','date_arrivee','heure_arrivee','prix','id_vehicule'];
         foreach($required as $f) {
             if (!isset($data[$f]) || $data[$f] === '') {
@@ -76,59 +76,10 @@ function creerVoyage(int $id_utilisateur, array $data): string {
     }
 }
 
-
 /**
- * Récupère covoiturages programmés pour un utilisateur
- *//*
-function getCovoituragesPourUtilisateur(int $id_utilisateur): array {
-    global $pdo;
-
-    // 1️ Covoiturages créés par l'utilisateur
-    $stmt1 = $pdo->prepare("
-        SELECT c.*, 
-               COALESCE(s.statut, 'prévu') AS statut,
-               v.marque, v.modele,
-               u.nom AS nom_chauffeur,
-               'Créateur' AS role
-        FROM covoiturage c
-        LEFT JOIN statut_covoiturage s ON c.id_covoiturage = s.id_covoiturage
-        LEFT JOIN vehicule v ON c.id_vehicule = v.id_vehicule
-        LEFT JOIN compte u ON c.id_utilisateur = u.id_utilisateur
-        WHERE c.id_utilisateur = :id_utilisateur
-          AND c.date_depart >= CURDATE()
-    ");
-    $stmt1->execute([':id_utilisateur' => $id_utilisateur]);
-    $crees = $stmt1->fetchAll(PDO::FETCH_ASSOC);
-
-    // 2️ Covoiturages auxquels l'utilisateur participe (pas créés par lui)
-    $stmt2 = $pdo->prepare("
-        SELECT c.*, 
-               v.marque, v.modele,
-               u.nom AS nom_chauffeur,
-               'Participant' AS role,
-               'prévu' AS statut
-        FROM reservation r
-        JOIN covoiturage c ON r.id_covoiturage = c.id_covoiturage
-        LEFT JOIN vehicule v ON c.id_vehicule = v.id_vehicule
-        LEFT JOIN compte u ON c.id_utilisateur = u.id_utilisateur
-        WHERE r.id_utilisateur = :id_utilisateur
-          AND c.id_utilisateur != :id_utilisateur
-          AND c.date_depart >= CURDATE()
-    ");
-    $stmt2->execute([':id_utilisateur' => $id_utilisateur]);
-    $participe = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-
-    $all = array_merge($crees, $participe);
-    usort($all, function($a, $b){
-        return strcmp(
-            $a['date_depart'] . ' ' . ($a['heure_depart'] ?? '00:00:00'),
-            $b['date_depart'] . ' ' . ($b['heure_depart'] ?? '00:00:00')
-        );
-    });
-
-    return $all;
-}*/
-
+ * Récupère covoiturages pour un utilisateur
+ * Inclut les covoiturages créés et ceux où l'utilisateur est participant
+ */
 function getCovoituragesPourUtilisateur(int $id_utilisateur): array {
     global $pdo;
 
@@ -148,7 +99,7 @@ function getCovoituragesPourUtilisateur(int $id_utilisateur): array {
     $stmt1->execute([':id_utilisateur' => $id_utilisateur]);
     $crees = $stmt1->fetchAll(PDO::FETCH_ASSOC);
 
-    // 2️ Covoiturages auxquels l'utilisateur participe (y compris créés par lui)
+    // 2️ Covoiturages auxquels l'utilisateur participe
     $stmt2 = $pdo->prepare("
         SELECT c.*, 
                v.marque, v.modele,
@@ -165,16 +116,14 @@ function getCovoituragesPourUtilisateur(int $id_utilisateur): array {
     $stmt2->execute([':id_utilisateur' => $id_utilisateur]);
     $participe = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
-    // Fusionner et trier par date/heure
+    // Fusionner et supprimer doublons
     $all = array_merge($crees, $participe);
-
-    // Supprimer doublons : un covoiturage ne doit pas apparaître deux fois si l'utilisateur est créateur et participant
     $unique = [];
     foreach ($all as $covoit) {
         $unique[$covoit['id_covoiturage']] = $covoit;
     }
 
-    // Trier par date/heure
+    // Trier par date et heure
     usort($unique, function($a, $b){
         return strcmp(
             $a['date_depart'] . ' ' . ($a['heure_depart'] ?? '00:00:00'),
@@ -184,7 +133,6 @@ function getCovoituragesPourUtilisateur(int $id_utilisateur): array {
 
     return array_values($unique);
 }
-
 
 /**
  * Historique des covoiturages passés
@@ -196,18 +144,21 @@ function getHistoriqueReservationsByUtilisateur(int $id_utilisateur): array {
         SELECT r.id_reservation, c.id_covoiturage, c.lieu_depart, c.lieu_arrivee,
                c.date_depart, c.heure_depart, c.date_arrivee, c.heure_arrivee,
                c.prix_par_personne, v.marque, v.modele,
-               u.nom AS nom_chauffeur, u.photo AS photo_chauffeur
+               u.nom AS nom_chauffeur, u.photo AS photo_chauffeur,
+               COALESCE(s.statut, 'prévu') AS statut
         FROM reservation r
         JOIN covoiturage c ON r.id_covoiturage = c.id_covoiturage
         JOIN vehicule v ON c.id_vehicule = v.id_vehicule
         JOIN compte u ON c.id_utilisateur = u.id_utilisateur
+        LEFT JOIN statut_covoiturage s ON c.id_covoiturage = s.id_covoiturage
         WHERE r.id_utilisateur = :uid
-          AND c.date_depart < CURDATE()
+          AND COALESCE(s.statut, 'prévu') = 'terminé'
         ORDER BY c.date_depart DESC, c.heure_depart DESC
     ");
     $stmt->execute([':uid' => $id_utilisateur]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 /**
  * Réserver un covoiturage (passager)
