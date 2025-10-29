@@ -2,29 +2,34 @@
 require_once ROOT_PATH . '/config/config.php';
 
 /**
- * Ajouter un avis
+ * Soumettre un avis pour un covoiturage
  */
-function ajouterAvis(int $id_reservation, int $note, string $commentaire): array {
+function soumettreAvis(int $id_utilisateur, int $id_covoiturage, string $message, int $note): bool {
     global $pdo;
-    try {
-        $stmt = $pdo->prepare("UPDATE avis_covoiturage SET note=:note, commentaire=:commentaire WHERE id_reservation=:id_reservation");
-        $stmt->execute([
-            ':id_reservation'=>$id_reservation,
-            ':note'=>$note,
-            ':commentaire'=>$commentaire
-        ]);
-        return ['success'=>true, 'message'=>'Avis envoyé.'];
-    } catch(Exception $e) {
-        return ['success'=>false, 'message'=>'Erreur : '.$e->getMessage()];
-    }
+    $stmt = $pdo->prepare("
+        INSERT INTO avis (id_utilisateur, id_covoiturage, message, note, date_avis)
+        VALUES (:uid, :cid, :message, :note, NOW())
+    ");
+    return $stmt->execute([
+        ':uid' => $id_utilisateur,
+        ':cid' => $id_covoiturage,
+        ':message' => $message,
+        ':note' => $note
+    ]);
 }
 
 /**
- * Récupérer les avis pour un utilisateur
+ * Récupérer tous les avis pour un covoiturage
  */
-function getAvisByReservation(int $id_reservation): ?array {
+function getAvisByCovoiturage(int $id_covoiturage): array {
     global $pdo;
-    $stmt = $pdo->prepare("SELECT * FROM avis_covoiturage WHERE id_reservation=:id_reservation");
-    $stmt->execute([':id_reservation'=>$id_reservation]);
-    return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    $stmt = $pdo->prepare("
+        SELECT a.*, u.nom AS nom_utilisateur 
+        FROM avis a
+        JOIN compte u ON a.id_utilisateur = u.id_utilisateur
+        WHERE a.id_covoiturage = :cid
+        ORDER BY a.date_avis DESC
+    ");
+    $stmt->execute([':cid' => $id_covoiturage]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }

@@ -61,6 +61,10 @@ switch ($page) {
         include APP_PATH .'/controleurs/action_covoiturage.php';
         break;
 
+    case 'avis':
+        include APP_PATH . '/controleurs/avis.php';
+        break;
+
     default:
         echo "Erreur 404 - Page non trouvée";
         break;

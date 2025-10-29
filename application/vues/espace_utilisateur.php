@@ -135,39 +135,51 @@
     <?php endif; ?>
 
     <!-- HISTORIQUE -->
-    <h3 class="text-center mt-4">Historique des covoiturages</h3>
-    <?php if(empty($historique)): ?>
-        <p class="text-center">Aucun covoiturage réalisé.</p>
-    <?php else: ?>
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Départ</th>
-                        <th>Arrivée</th>
-                        <th>Date</th>
-                        <th>Heure départ</th>
-                        <th>Heure arrivée</th>
-                        <th>Prix</th>
-                        <th>Chauffeur</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach($historique as $h): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($h['lieu_depart'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($h['lieu_arrivee'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($h['date_depart'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($h['heure_depart'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($h['heure_arrivee'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($h['prix_par_personne'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($h['nom_chauffeur'] ?? '') ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    <?php endif; ?>
+<h3 class="text-center mt-4">Historique des covoiturages</h3>
+<?php if(empty($historique)): ?>
+    <p class="text-center">Aucun covoiturage réalisé.</p>
+<?php else: ?>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Départ</th>
+                <th>Arrivée</th>
+                <th>Date</th>
+                <th>Heure départ</th>
+                <th>Heure arrivée</th>
+                <th>Prix</th>
+                <th>Chauffeur</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($historique as $h): ?>
+                <tr>
+                    <td><?= htmlspecialchars($h['lieu_depart'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($h['lieu_arrivee'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($h['date_depart'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($h['heure_depart'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($h['heure_arrivee'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($h['prix_par_personne'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($h['nom_chauffeur'] ?? '') ?></td>
+                    <td>
+                        <?php if(!empty($h['peut_ajouter_avis'])): ?>
+                            <a href="index.php?page=avis&id_covoiturage=<?= (int)$h['id_covoiturage'] ?>" class="btn btn-sm btn-primary">
+                                Donner un avis
+                            </a>
+                        <?php else: ?>
+                            -
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+<?php endif; ?>
+
+
 
     <!-- COVOITURAGES PROGRAMMES -->
     <h3 class="text-center mt-4">Covoiturages programmés</h3>
