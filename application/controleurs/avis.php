@@ -1,9 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
-
-// Inclusion de la configuration PDO
 require_once ROOT_PATH . '/config/config.php';
-
 require_once APP_PATH . '/modeles/utilisateur.php';
 require_once APP_PATH . '/modeles/covoiturage.php';
 require_once APP_PATH . '/modeles/avis.php';
@@ -16,55 +13,40 @@ if (!isset($_SESSION['user'])) {
 $user_id = (int) ($_SESSION['user']['id_utilisateur'] ?? 0);
 $id_covoiturage = (int) ($_GET['id_covoiturage'] ?? 0);
 
-// Message d'information
 $message_avis = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $note = isset($_POST['note']) && is_numeric($_POST['note']) ? (int) $_POST['note'] : 0;
+    $commentaire = trim($_POST['commentaire'] ?? '');
+    $bien_passe = isset($_POST['bien_passe']) ? 1 : 0;
 
-// Vérifier si le covoiturage existe
-$stmt = $pdo->prepare("SELECT * FROM covoiturage WHERE id_covoiturage = :id");
-$stmt->execute(['id' => $id_covoiturage]);
-$covoiturage = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($note >= 1 && $note <= 5 && !empty($commentaire)) {
+        // Insérer dans avis
+        $stmt = $pdo->prepare("
+            INSERT INTO avis (date_avis, statut_validation, commentaire, id_covoiturage, id_utilisateur)
+            VALUES (NOW(), :statut, :commentaire, :cid, :uid)
+        ");
+        $ok = $stmt->execute([
+            ':statut' => $bien_passe,
+            ':commentaire' => $commentaire,
+            ':cid' => $id_covoiturage,
+            ':uid' => $user_id
+        ]);
 
-if (!$covoiturage) {
-    $message_avis = "Covoiturage invalide.";
-    $avis_list = [];
-} else {
-    // Vérifier si terminé
-    if (!isCovoiturageTermine($id_covoiturage)) {
-        $message_avis = "Ce covoiturage n'est pas encore terminé. L'ajout d'avis sera possible après la fin.";
+        // Optionnel : Insérer dans note
+        $stmt2 = $pdo->prepare("
+            INSERT INTO note (valeur1, id_covoiturage, id_utilisateur)
+            VALUES (:note, :cid, :uid)
+        ");
+        $stmt2->execute([
+            ':note' => $note,
+            ':cid' => $id_covoiturage,
+            ':uid' => $user_id
+        ]);
+
+        $message_avis = $ok ? "Avis ajouté avec succès !" : "Erreur lors de l'ajout de l'avis.";
+    } else {
+        $message_avis = "Veuillez saisir un commentaire et une note valide (1-5).";
     }
-
-    // POST : soumission avis
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $note = (int) ($_POST['note'] ?? 0);
-        $message = trim($_POST['message'] ?? '');
-
-        if ($note >= 1 && $note <= 5 && $message !== '') {
-            $ok = soumettreAvis($user_id, $id_covoiturage, $message, $note);
-            $message_avis = $ok ? "Avis ajouté avec succès !" : "Erreur lors de l'ajout de l'avis.";
-        } else {
-            $message_avis = "Veuillez saisir un message et une note valide (1-5).";
-        }
-    }
-
-    // Récupérer les avis existants
-    $avis_list = getAvisByCovoiturage($id_covoiturage);
-}
-
-// Fonction pour vérifier si un covoiturage est terminé
-function isCovoiturageTermine($id_covoiturage) {
-    global $pdo;
-    $stmt = $pdo->prepare("
-        SELECT date_depart, date_arrivee, heure_depart, heure_arrivee 
-        FROM covoiturage 
-        WHERE id_covoiturage = :id
-    ");
-    $stmt->execute(['id' => $id_covoiturage]);
-    $covoiturage = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$covoiturage) return false;
-
-    $date_heure_fin = $covoiturage['date_arrivee'] . ' ' . ($covoiturage['heure_arrivee'] ?? '23:59:59');
-    return time() >= strtotime($date_heure_fin);
 }
 
 // Vue

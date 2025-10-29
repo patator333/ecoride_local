@@ -4,17 +4,16 @@ require_once ROOT_PATH . '/config/config.php';
 /**
  * Soumettre un avis pour un covoiturage
  */
-function soumettreAvis(int $id_utilisateur, int $id_covoiturage, string $message, int $note): bool {
+function soumettreAvis(int $id_utilisateur, int $id_covoiturage, string $commentaire, int $note): bool {
     global $pdo;
     $stmt = $pdo->prepare("
-        INSERT INTO avis (id_utilisateur, id_covoiturage, message, note, date_avis)
-        VALUES (:uid, :cid, :message, :note, NOW())
+        INSERT INTO avis (id_utilisateur, id_covoiturage, commentaire, date_avis, statut_validation)
+        VALUES (:uid, :cid, :commentaire, NOW(), 0)
     ");
     return $stmt->execute([
         ':uid' => $id_utilisateur,
         ':cid' => $id_covoiturage,
-        ':message' => $message,
-        ':note' => $note
+        ':commentaire' => $commentaire
     ]);
 }
 

@@ -1,44 +1,47 @@
 <?php include APP_PATH . '/vues/entete.php'; ?>
 
-<div class="container mt-4">
-    <h3 class="text-center mb-4">Donner un avis pour ce covoiturage</h3>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
 
-    <?php if(!empty($message_avis)): ?>
-        <div class="alert alert-info text-center"><?= htmlspecialchars($message_avis) ?></div>
-    <?php endif; ?>
+            <?php if(!empty($message_avis)): ?>
+                <div class="alert alert-info text-center"><?= htmlspecialchars($message_avis) ?></div>
+            <?php endif; ?>
 
-    <form method="POST" class="mb-4">
-        <div class="mb-3 text-center">
-            <label for="note" class="form-label">Note :</label>
-            <select name="note" id="note" class="form-select w-auto d-inline-block">
-                <option value="">-- Choisir --</option>
-                <?php for($i=1; $i<=5; $i++): ?>
-                    <option value="<?= $i ?>"><?= $i ?></option>
-                <?php endfor; ?>
-            </select>
+            <div class="card p-4">
+                <h3 class="card-title text-center mb-3">Donner un avis pour ce covoiturage</h3>
+
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="note" class="form-label">Note :</label>
+                        <select id="note" name="note" class="form-select" required>
+                            <option value="">-- Choisir --</option>
+                            <option value="1">1 - Mauvais</option>
+                            <option value="2">2 - Moyen</option>
+                            <option value="3">3 - Correct</option>
+                            <option value="4">4 - Bien</option>
+                            <option value="5">5 - Excellent</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Commentaire :</label>
+                        <textarea id="message" name="message" class="form-control" rows="4" placeholder="Écrivez votre avis ici..." required></textarea>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="bien_passe" name="bien_passe" value="1">
+                        <label class="form-check-label" for="bien_passe">Le covoiturage s'est bien passé</label>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Envoyer l'avis</button>
+                    </div>
+                </form>
+            </div>
+
         </div>
-
-        <div class="mb-3">
-            <label for="message" class="form-label">Commentaire :</label>
-            <textarea name="message" id="message" class="form-control" rows="4" placeholder="Écrivez votre avis ici..."></textarea>
-        </div>
-
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">Envoyer l'avis</button>
-            <a href="index.php?page=espace_utilisateur" class="btn btn-secondary">Retour</a>
-        </div>
-    </form>
-
-    <?php if(!empty($avis_list)): ?>
-        <h4 class="mt-4">Avis existants</h4>
-        <ul class="list-group">
-            <?php foreach($avis_list as $avis): ?>
-                <li class="list-group-item">
-                    <strong>Note :</strong> <?= (int)$avis['note'] ?> / 5<br>
-                    <strong>Commentaire :</strong> <?= htmlspecialchars($avis['message']) ?><br>
-                    <small class="text-muted">Par <?= htmlspecialchars($avis['nom_utilisateur']) ?> le <?= htmlspecialchars($avis['date_ajout']) ?></small>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
+    </div>
 </div>
+
+<?php include APP_PATH . '/vues/pied_de_page.php'; ?>
