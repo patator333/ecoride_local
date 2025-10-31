@@ -26,7 +26,7 @@
 
                     <div class="mb-3">
                         <label for="message" class="form-label">Commentaire :</label>
-                        <textarea id="message" name="message" class="form-control" rows="4" placeholder="Écrivez votre avis ici..." required></textarea>
+                        <textarea id="commentaire" name="commentaire" class="form-control" rows="4" placeholder="Écrivez votre avis ici..." required></textarea>
                     </div>
 
                     <div class="mb-3 form-check">
