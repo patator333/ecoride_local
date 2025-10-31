@@ -149,7 +149,7 @@
                 <th>Heure départ</th>
                 <th>Heure arrivée</th>
                 <th>Prix</th>
-                <th>Chauffeur</th>
+                <th>Chauffeur</th> 
                 <th>Actions</th>
             </tr>
         </thead>

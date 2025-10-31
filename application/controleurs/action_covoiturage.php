@@ -2,16 +2,9 @@
 require_once ROOT_PATH . '/config/config.php';
 require_once APP_PATH . '/modeles/covoiturage.php';
 require_once APP_PATH . '/modeles/reservation.php';
+require_once APP_PATH . '/modeles/mail.php'; // PHPMailer intégré
 
 if (session_status() === PHP_SESSION_NONE) session_start();
-
-// Fonction temporaire pour éviter l'erreur (ne fait rien pour l'instant)
-if (!function_exists('envoyerMail')) {
-    function envoyerMail($destinataire, $sujet, $message) {
-        // temporaire : ne fait rien
-        return true;
-    }
-}
 
 // Vérifier si l'utilisateur est connecté
 if (empty($_SESSION['user'])) {
@@ -36,7 +29,7 @@ if (!$cov || $cov['id_utilisateur'] != $id_utilisateur) {
     $_SESSION['message'] = "Vous n'avez pas le droit d'effectuer cette action.";
     header("Location: index.php?page=espace_utilisateur");
     exit;
-}
+} 
 
 switch ($action) {
     case 'demarrer':
@@ -46,14 +39,14 @@ switch ($action) {
 
     case 'terminer':
         changerStatutCovoiturage($id_covoiturage, 'terminé');
-        // Envoyer mail à tous les participants (fonction temporaire)
+
+        // Envoyer mail à tous les participants
         $participants = getParticipants($id_covoiturage);
         foreach ($participants as $p) {
-            envoyerMail($p['mail'], 
-                        "Covoiturage terminé à valider", 
-                        "Le covoiturage {$cov['lieu_depart']} → {$cov['lieu_arrivee']} est terminé. Merci de vous connecter à votre espace utilisateur pour valider.");
+            envoyerMail($p['mail'], $p['nom']); // utilise PHPMailer et le mail générique
         }
-        $_SESSION['message'] = "Covoiturage terminé, mails (temporaires) ignorés.";
+
+        $_SESSION['message'] = "Covoiturage terminé, mails envoyés (ou tentés).";
         break;
 
     case 'annuler':

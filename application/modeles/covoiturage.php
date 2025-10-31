@@ -110,7 +110,7 @@ function rechercherCovoiturages(array $criteres, int $limit, int $offset): array
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
+ 
 /**
  * Changer le statut d'un covoiturage
  */
