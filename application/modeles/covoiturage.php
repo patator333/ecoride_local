@@ -21,7 +21,7 @@ function getCovoiturageById(int $id_covoiturage): ?array {
     $cov = $stmt->fetch(PDO::FETCH_ASSOC);
 
     return $cov ?: null;
-}
+} 
 
 /**
  * Récupérer tous les participants d'un covoiturage

@@ -54,7 +54,7 @@ if ($ville_depart && $ville_arrivee && $date_depart) {
     }
     unset($cov); // briser la référence
 }
-
+ 
 // Récupérer message depuis session
 $message = $_SESSION['message'] ?? null;
 unset($_SESSION['message']);
