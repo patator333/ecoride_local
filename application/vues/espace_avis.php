@@ -2,16 +2,17 @@
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-lg-6 col-md-8 col-12">
 
             <?php if(!empty($message_avis)): ?>
                 <div class="alert alert-info text-center"><?= htmlspecialchars($message_avis) ?></div>
             <?php endif; ?>
 
-            <div class="card p-4">
-                <h3 class="card-title text-center mb-3">Donner un avis pour ce covoiturage</h3>
+            <div class="card p-4 shadow-sm">
+                <h3 class="card-title text-center mb-4">Donner un avis pour ce covoiturage</h3>
 
                 <form method="POST">
+
                     <div class="mb-3">
                         <label for="note" class="form-label">Note :</label>
                         <select id="note" name="note" class="form-select" required>
@@ -25,7 +26,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="message" class="form-label">Commentaire :</label>
+                        <label for="commentaire" class="form-label">Commentaire :</label>
                         <textarea id="commentaire" name="commentaire" class="form-control" rows="4" placeholder="Écrivez votre avis ici..." required></textarea>
                     </div>
 
@@ -34,9 +35,10 @@
                         <label class="form-check-label" for="bien_passe">Le covoiturage s'est bien passé</label>
                     </div>
 
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Envoyer l'avis</button>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-block">Envoyer l'avis</button>
                     </div>
+
                 </form>
             </div>
 

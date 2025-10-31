@@ -16,13 +16,13 @@
     <?php endif; ?>
 
     <!-- Avis à valider -->
-    <h4>Les covoiturages demandant une validation des avis passager</h4>
+    <h4 class="mt-4">Les covoiturages demandant une validation des avis passager</h4>
 
     <?php if (!empty($avisNonValides)): ?>
         <div class="table-responsive mb-4">
-            <table class="table table-bordered align-middle">
+            <table class="table table-bordered align-middle text-center">
                 <thead class="table-light">
-                    <tr class="text-center">
+                    <tr>
                         <th>Auteur</th>
                         <th>Trajet</th>
                         <th>Date</th>
@@ -33,7 +33,7 @@
                 </thead>
                 <tbody>
                     <?php foreach($avisNonValides as $avis): ?>
-                        <tr class="text-center">
+                        <tr>
                             <td><?= htmlspecialchars($avis['auteur_avis']) ?></td>
                             <td><?= htmlspecialchars($avis['lieu_depart']) ?> → <?= htmlspecialchars($avis['lieu_arrivee']) ?></td>
                             <td><?= htmlspecialchars($avis['date_avis']) ?></td>
@@ -52,7 +52,7 @@
                                 ?>
                             </td>
                             <td>
-                                <form method="post" action="index.php?page=espace_employe">
+                                <form method="post" class="d-flex justify-content-center flex-wrap gap-1">
                                     <input type="hidden" name="id_avis" value="<?= $avis['id_avis'] ?>">
                                     <button type="submit" name="action" value="valider" class="btn btn-success btn-sm">✅ Valider</button>
                                     <button type="submit" name="action" value="refuser" class="btn btn-danger btn-sm">❌ Refuser</button>
@@ -64,14 +64,14 @@
             </table>
         </div>
     <?php else: ?>
-        <p>Aucun avis en attente de validation.</p>
+        <p class="text-center">Aucun avis en attente de validation.</p>
     <?php endif; ?>
 
     <!-- Covoiturages mal passés -->
-    <h4>Covoiturages qui se sont mal passés</h4>
+    <h4 class="mt-4">Covoiturages qui se sont mal passés</h4>
     <?php if (!empty($covoituragesProbleme)): ?>
-        <div class="table-responsive">
-            <table class="table table-bordered">
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered table-striped text-center">
                 <thead class="table-light">
                     <tr>
                         <th>N° Covoiturage</th>
@@ -97,7 +97,7 @@
             </table>
         </div>
     <?php else: ?>
-        <p>Aucun covoiturage à problème enregistré.</p>
+        <p class="text-center">Aucun covoiturage à problème enregistré.</p>
     <?php endif; ?>
 
 </div>

@@ -1,14 +1,13 @@
-
 <div class="container mt-5">
     <h2 class="text-center mb-4">Contactez-nous</h2>
 
-    <?php if (!empty($message)): ?>           <!-- Test si $message n'est pas vide-->
+    <?php if (!empty($message)): ?>
         <div class="alert alert-info text-center">
-            <?= htmlspecialchars($message) ?> <!-- n'interprète pas les caractères spéciaux, et affiche le message-->
+            <?= htmlspecialchars($message) ?>
         </div>
     <?php endif; ?>
 
-    <form method="POST" class="mx-auto" style="max-width: 500px;">
+    <form method="POST" class="mx-auto p-4 border rounded shadow-sm" style="max-width: 500px; background-color: #f8f9fa;">
         <div class="mb-3">
             <label for="nom" class="form-label">Nom</label>
             <input type="text" name="nom" id="nom" class="form-control" required>
@@ -24,9 +23,8 @@
             <textarea name="commentaire" id="commentaire" class="form-control" rows="4" required></textarea>
         </div>
 
-        <div class="text-center">
-            <button type="submit" class="btn btn-success px-4">Envoyer</button>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-success btn-block">Envoyer</button>
         </div>
     </form>
 </div>
-
