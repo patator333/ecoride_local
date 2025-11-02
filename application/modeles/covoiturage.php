@@ -1,5 +1,5 @@
 <?php
-require_once ROOT_PATH . '/config/config.php'; // $pdo doit être défini
+require_once ROOT_PATH . '/config/config.php'; 
 
 /**
  * Récupérer un covoiturage par son ID

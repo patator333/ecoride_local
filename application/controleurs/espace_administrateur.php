@@ -1,5 +1,5 @@
 <?php
-// Fichier : /controleurs/espace_administrateur.php
+
 require_once APP_PATH . '/modeles/administrateur.php';
 require_once ROOT_PATH . '/config/config.php';
 

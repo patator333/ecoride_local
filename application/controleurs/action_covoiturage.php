@@ -2,7 +2,7 @@
 require_once ROOT_PATH . '/config/config.php';
 require_once APP_PATH . '/modeles/covoiturage.php';
 require_once APP_PATH . '/modeles/reservation.php';
-require_once APP_PATH . '/modeles/mail.php'; // PHPMailer intégré
+require_once APP_PATH . '/modeles/mail.php'; 
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 

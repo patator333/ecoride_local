@@ -39,7 +39,7 @@ function envoyerMail(string $destinataire, string $nomDestinataire = ''): bool {
         $mail->Body = "
             <p>Bonjour " . htmlspecialchars($nomDestinataire) . ",</p>
             <p>Vous avez récemment effectué un trajet via notre plateforme. Afin de finaliser ce voyage, merci de vous rendre sur votre espace personnel pour le confirmer.</p>
-            <p>👉 <a href='{$lienEspace}'>Cliquez ici pour vous connecter</a></p>
+            <p> <a href='{$lienEspace}'>Cliquez ici pour vous connecter</a></p>
             <p>Cela nous permet de valider le bon déroulement du trajet et d’améliorer l’expérience pour tous les utilisateurs.</p>
             <p>Merci pour votre retour,<br>L’équipe Ecoride</p>
         ";

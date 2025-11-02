@@ -42,7 +42,7 @@ if ($ville_depart && $ville_arrivee && $date_depart) {
     // Récupérer les covoiturages pour cette page
     $covoiturages = rechercherCovoiturages($criteres, $limit, $offset);
 
-    // 🔹 Récupérer les préférences du chauffeur pour chaque covoiturage
+    //  Récupérer les préférences du chauffeur pour chaque covoiturage
     foreach ($covoiturages as &$cov) {
         $id_chauffeur = $cov['id_utilisateur'] ?? 0;
         if ($id_chauffeur) {
