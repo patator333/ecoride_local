@@ -7,7 +7,7 @@ define('APP_PATH', ROOT_PATH . '/application'); // équivalent à c:\wamp64\www\
 
 define('PUBLIC_PATH', ROOT_PATH . '/public');   // équivalent à C:\wamp64\www\ecoride/public
 
-define('PUBLIC_URL', '/Ecoride/public');      // redirige le localhost vers le dossier public pour qu'il tape dans index.php
+define('PUBLIC_URL', '/ecoride/public');      // redirige le localhost vers le dossier public pour qu'il tape dans index.php
 
 
 try {
