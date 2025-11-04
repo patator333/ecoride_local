@@ -18,6 +18,6 @@ try {
     );
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("Erreur de connexion à la BDD : " . $e->getMessage());
+    die("Erreur de connexion à la BDD : " . $e->getMessage()); 
 }
  
